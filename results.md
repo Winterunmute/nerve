@@ -346,3 +346,30 @@ The feature from the last commit is working for both cases — no changes needed
 
 ---
 
+## Test that dispatch still works correctly after auto-populate
+
+**Completed:** 2026-04-14 23:52:55
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+I've reviewed the full code path. Here's the analysis:
+
+**Auto-populate change** (lines 310-312 in `index.html`):
+```javascript
+document.getElementById('projectSelect').addEventListener('change', function () {
+  if (this.value) { projInput.value = this.value; updatePreview() }
+})
+```
+
+**Dispatch flow trace:**
+
+1. `dispatch()` reads `projInput.value.trim()` — populated correctly whether the user typed it, selected from dropdown, or clicked "load"
+2. `parseContent(editor.value)` — unchanged, parses `## Plan` and `## Tasks` sections
+3. `ipcRenderer.invoke('save-project', { projectName: proj, syncPath, plan, tasks })` — unchanged
+4. `save-project` handler in `main.js:134` — creates directory, writes `plan.md` and `tasks.md` with `- [ ] task` formatting — unchanged
+
+**Verdict: dispatch is intact.** The auto-populate change only affects how `projInput` gets its value — via dropdown `change` event in addition to direct typing and the "load" button. It's completely orthogonal to the dispatch path.
+
+**One scenario to be aware of:** If a user selects a project from the dropdown (auto-populating the name) but does *not* click "load", then edits the editor and dispatches — this will overwrite the existing project's files with the new editor content. This is the intended behavior (selecting just to set the name prefix), but it means selecting from the dropdown without loading is a destructive action on dispatch. No code change needed — just a UX awareness note.
+
+---
+
