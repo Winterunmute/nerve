@@ -64,3 +64,12 @@ All edge cases handled. The regex change is minimal and surgical — it only add
 
 ---
 
+## Update ~/sync/nerve/plan.md to note the fix
+
+**Completed:** 2026-04-14 20:17:05
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+`plan.md` updated with the fix status, root cause, and the file/function where it was patched.
+
+---
+
