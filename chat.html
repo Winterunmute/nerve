@@ -66,6 +66,26 @@
   .titlebar-btn:hover { background: var(--surface2); color: var(--text-bright); }
   .titlebar-btn.close:hover { background: rgba(224,108,117,0.2); color: var(--red); }
 
+  .model-select {
+    -webkit-app-region: no-drag;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 3px 6px;
+    height: 22px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    letter-spacing: 0.03em;
+    max-width: 180px;
+  }
+  .model-select:hover { border-color: var(--border-bright); }
+  .model-select:focus { border-color: var(--green-dim); }
+  .model-select option { background: var(--surface2); color: var(--text); }
+
   /* ── loading bar ── */
   .loading-bar {
     height: 2px;
@@ -217,6 +237,7 @@
 <div class="titlebar">
   <div class="title-dot"></div>
   <span class="titlebar-text">NERVE // AI DRAFT <span class="titlebar-proj" id="projLabel"></span></span>
+  <select class="model-select" id="modelSelect" title="Ollama model"></select>
   <button class="titlebar-btn" onclick="ipcRenderer.send('minimize-window')" title="Minimize">─</button>
   <button class="titlebar-btn close" onclick="window.close()" title="Close">✕</button>
 </div>
@@ -239,8 +260,9 @@
 <script>
 const { ipcRenderer } = require('electron')
 
-const OLLAMA_MODEL = 'qwen2.5-coder:7b'
+let   OLLAMA_MODEL = 'qwen2.5-coder:7b'
 const OLLAMA_URL   = 'http://localhost:11434/api/chat'
+const OLLAMA_TAGS  = 'http://localhost:11434/api/tags'
 
 const GENERATE_PROMPT = `Generate the dispatch draft now. Output ONLY the markdown — no preamble, no explanation, no code fences wrapping the output, no text before ## Plan or after the last task line.
 
@@ -268,10 +290,11 @@ const sendBtn     = document.getElementById('sendBtn')
 const generateBtn = document.getElementById('generateBtn')
 const loadingBar  = document.getElementById('loadingBar')
 const projLabel   = document.getElementById('projLabel')
+const modelSelect = document.getElementById('modelSelect')
 
 // ── init ─────────────────────────────────────────────────────────────────────
 
-window.addEventListener('DOMContentLoaded', loadContext)
+window.addEventListener('DOMContentLoaded', () => { loadModels(); loadContext() })
 
 chatInput.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !isStreaming) {
@@ -279,6 +302,36 @@ chatInput.addEventListener('keydown', e => {
     handleSend()
   }
 })
+
+// ── model selector ────────────────────────────────────────────────────────────
+
+async function loadModels() {
+  try {
+    const res = await fetch(OLLAMA_TAGS)
+    if (!res.ok) throw new Error('no response')
+    const { models } = await res.json()
+    const names = (models || []).map(m => m.name).sort()
+    modelSelect.innerHTML = ''
+    for (const name of names) {
+      const opt = document.createElement('option')
+      opt.value = name
+      opt.textContent = name
+      if (name === OLLAMA_MODEL) opt.selected = true
+      modelSelect.appendChild(opt)
+    }
+    if (names.length && !names.includes(OLLAMA_MODEL)) {
+      OLLAMA_MODEL = names[0]
+      modelSelect.value = OLLAMA_MODEL
+    }
+  } catch {
+    // Ollama not running — seed with current model as placeholder
+    const opt = document.createElement('option')
+    opt.value = OLLAMA_MODEL
+    opt.textContent = OLLAMA_MODEL
+    modelSelect.appendChild(opt)
+  }
+  modelSelect.addEventListener('change', () => { OLLAMA_MODEL = modelSelect.value })
+}
 
 // ── context loading ───────────────────────────────────────────────────────────
 

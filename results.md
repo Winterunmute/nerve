@@ -411,3 +411,18 @@ Here's a summary of `chat.html`'s structure and Ollama fetch logic:
 
 ---
 
+## Add model selector dropdown to the chat titlebar — right side, compact, monospace style matching the aesthetic
+
+**Completed:** 2026-04-15 00:11:39
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Looks clean. Here's what was added:
+
+**Titlebar HTML** — a `<select id="modelSelect">` between the title text and window buttons, with `-webkit-app-region: no-drag` so it's clickable.
+
+**CSS `.model-select`** — 11px monospace, `--green` text on `--surface2` background with `--border` outline, 22px height to sit compact in the 36px titlebar. Hover/focus states match the existing button style.
+
+**`loadModels()`** — called on `DOMContentLoaded` alongside `loadContext()`. Fetches `http://localhost:11434/api/tags`, sorts model names alphabetically, pre-selects the current default (`qwen2.5-coder:7b`). If Ollama isn't running, falls back to the hardcoded default as a single option. The `change` listener keeps `OLLAMA_MODEL` in sync so subsequent requests use whatever's selected.
+
+---
+
