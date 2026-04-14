@@ -306,6 +306,7 @@ chatInput.addEventListener('keydown', e => {
 // ── model selector ────────────────────────────────────────────────────────────
 
 async function loadModels() {
+  const saved = localStorage.getItem('nerve-model')
   try {
     const res = await fetch(OLLAMA_TAGS)
     if (!res.ok) throw new Error('no response')
@@ -316,20 +317,28 @@ async function loadModels() {
       const opt = document.createElement('option')
       opt.value = name
       opt.textContent = name
-      if (name === OLLAMA_MODEL) opt.selected = true
       modelSelect.appendChild(opt)
     }
-    if (names.length && !names.includes(OLLAMA_MODEL)) {
+    if (saved && names.includes(saved)) {
+      modelSelect.value = saved
+    } else if (names.includes(OLLAMA_MODEL)) {
+      modelSelect.value = OLLAMA_MODEL
+    } else if (names.length) {
       modelSelect.value = names[0]
     }
   } catch {
-    // Ollama not running — seed with current model as placeholder
+    // Ollama not running — seed with saved or default model as placeholder
+    const fallback = saved || OLLAMA_MODEL
     const opt = document.createElement('option')
-    opt.value = OLLAMA_MODEL
-    opt.textContent = OLLAMA_MODEL
+    opt.value = fallback
+    opt.textContent = fallback
     modelSelect.appendChild(opt)
   }
 }
+
+modelSelect.addEventListener('change', () => {
+  localStorage.setItem('nerve-model', modelSelect.value)
+})
 
 // ── context loading ───────────────────────────────────────────────────────────
 

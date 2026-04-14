@@ -451,3 +451,17 @@ Three changes made:
 
 ---
 
+## Persist selected model to localStorage and restore on load
+
+**Completed:** 2026-04-15 00:13:01
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. Changes made to `chat.html`:
+
+- `loadModels()` reads `localStorage.getItem('nerve-model')` before populating the dropdown, then restores the saved selection if it's present in the available models list.
+- Falls back to `OLLAMA_MODEL` constant, then first available model if the saved value isn't in the list.
+- When Ollama is unreachable, seeds with the saved model (or the hardcoded default) rather than always showing `qwen2.5-coder:7b`.
+- A `change` listener on `modelSelect` writes `localStorage.setItem('nerve-model', ...)` whenever the user picks a different model.
+
+---
+
