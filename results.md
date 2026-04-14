@@ -113,3 +113,35 @@ Here are all the file paths constructed in `nerve-context.js`, with their Window
 
 ---
 
+## Verify os.homedir() + path.join resolves correctly for C:\Users\Ricka\projects\ on Windows
+
+**Completed:** 2026-04-14 23:22:51
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The code uses standard `path.join()` from Node.js throughout. Here's the analysis:
+
+---
+
+## Verification: `os.homedir()` + `path.join` on Windows (`C:\Users\Ricka\projects\`)
+
+Node.js `path` module is **platform-aware** — on Windows it automatically uses `path.win32` semantics. Here's what each call in `nerve-context.js` resolves to on Windows with `os.homedir()` returning `C:\Users\Ricka`:
+
+| Expression | Result |
+|---|---|
+| `os.homedir()` | `C:\Users\Ricka` |
+| `path.join(home, 'CLAUDE.md')` | `C:\Users\Ricka\CLAUDE.md` |
+| `path.join(home, 'projects', 'zero-system', 'CLAUDE.md')` | `C:\Users\Ricka\projects\zero-system\CLAUDE.md` |
+| `path.join(home, 'projects', projectName)` | `C:\Users\Ricka\projects\<name>` |
+| `path.join(syncPath, projectName)` (with `syncPath = C:\Users\Ricka\projects`) | `C:\Users\Ricka\projects\<name>` |
+| `path.join(syncPath, projectName)` (trailing slash: `C:\Users\Ricka\projects\`) | `C:\Users\Ricka\projects\<name>` — `path.join` normalizes trailing separators |
+
+**All calls are correct.** Key reasons:
+
+1. **`os.homedir()` on Windows** returns the Windows home path in native format (`C:\Users\Ricka`), never with a trailing backslash.
+2. **`path.join` normalizes separators** — trailing slashes, mixed `\`/`/`, and double separators are all collapsed.
+3. **`path.relative()` at line 124** uses `replace(/\\/g, '/')` to convert backslashes to forward slashes for display — this is the only place where explicit slash handling is needed, and it's already there.
+
+**No issues** — the code is safe for `C:\Users\Ricka\projects\` on Windows.
+
+---
+

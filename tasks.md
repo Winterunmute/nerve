@@ -1,5 +1,5 @@
 - [x] Read nerve-context.js and trace all file paths it constructs on Windows
-- [ ] Verify os.homedir() + path.join resolves correctly for C:\Users\Ricka\projects\ on Windows
+- [x] Verify os.homedir() + path.join resolves correctly for C:\Users\Ricka\projects\ on Windows
 - [ ] Fix any path issues — ensure CLAUDE.md, plan.md, tasks.md, results.md and source files are found
 - [ ] Add a context summary to the chat window on load: list each source it found or skipped
 - [ ] Test by checking the context summary shows real files when zero-system project is selected in NERVE
