@@ -329,3 +329,20 @@ Now when you pick a project from the "Load existing" dropdown, the Project input
 
 ---
 
+## Ensure this works both when loading an existing project and just selecting from the dropdown without clicking load
+
+**Completed:** 2026-04-14 23:52:12
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Looking at the code, both paths are already handled correctly:
+
+1. **Selecting from dropdown (no load click)** — the `change` event listener at line 310 fires and sets `projInput.value = this.value`, then calls `updatePreview()`.
+
+2. **Clicking "load"** — `loadProject()` at line 379 sets `projInput.value = proj` (line 389) after the IPC call succeeds, then calls `updatePreview()`.
+
+There's also a nice resilience property: since the `change` handler fires first on any dropdown selection, even if `loadProject()` fails (e.g. files don't exist yet), `projInput` was already populated by the `change` event.
+
+The feature from the last commit is working for both cases — no changes needed.
+
+---
+
