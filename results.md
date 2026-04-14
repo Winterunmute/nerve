@@ -274,3 +274,17 @@ Added the instruction as a new bullet in the Behaviour section, just before "On 
 
 ---
 
+## Tighten the GENERATE_PROMPT in chat.html to be more directive about grounding
+
+**Completed:** 2026-04-14 23:49:16
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The updated `GENERATE_PROMPT` now:
+
+- Replaces the vague "based on our conversation" placeholder with **explicit grounding constraints** listed before the template
+- Bans invented paths, commands, and undiscussed tasks by name (mirrors the language in `nerve-ai.md`'s grounding rule)
+- Changes `[write the full, detailed plan based on our conversation]` → `[full specification — only what was discussed and confirmed]` so the model's own template reminds it of the constraint as it fills in the blanks
+- Refines the tasks bullet to "simple to complex, one discrete action each" to match the nerve-ai.md tasks format spec
+
+---
+
