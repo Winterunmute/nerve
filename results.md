@@ -534,3 +534,12 @@ Done. The rewrite shifts from a rigid dispatch formatter (strict output format, 
 
 ---
 
+## Replace example dispatch with a short high-level one — no line numbers, no invented paths
+
+**Completed:** 2026-04-15 00:40:52
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. Added a short example dispatch to `nerve-ai.md` that uses actual project paths (`task-pipeline.sh`, `~/sync/.zero-config`) with no line numbers or invented paths.
+
+---
+
