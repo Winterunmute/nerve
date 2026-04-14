@@ -1,5 +1,6 @@
-- [x] Read nerve-context.js and trace all file paths it constructs on Windows
-- [x] Verify os.homedir() + path.join resolves correctly for C:\Users\Ricka\projects\ on Windows
-- [x] Fix any path issues — ensure CLAUDE.md, plan.md, tasks.md, results.md and source files are found
-- [x] Add a context summary to the chat window on load: list each source it found or skipped
-- [x] Test by checking the context summary shows real files when zero-system project is selected in NERVE
+- [x] Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
+- [ ] Rewrite nerve-ai.md: add explicit rule that Qwen must only reference files and paths it has actually seen in the provided context, never invent Maven commands, test runners, or tasks unrelated to the project
+- [ ] Add instruction: if context is missing or unclear, ask the user before drafting
+- [ ] Add instruction: the draft must reflect the conversation — do not generate a plan the user did not discuss
+- [ ] Tighten the GENERATE_PROMPT in chat.html to be more directive about grounding
+- [ ] Update ~/sync/nerve/plan.md to note the fix

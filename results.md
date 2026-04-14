@@ -215,3 +215,27 @@ One caveat: on Windows, `~/projects/zero-system/` won't exist (that's Epyon-only
 
 ---
 
+## Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
+
+**Completed:** 2026-04-14 23:47:24
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Read both files. Here's a summary of what they are:
+
+**`nerve-ai.md`** — the system prompt for the AI draft assistant. It defines:
+- Role: Zero System dispatch drafting assistant (helps compose `plan.md` + `tasks.md` for Epyon)
+- Output format: strict `## Plan` / `## Tasks` markdown, no preamble, no fences
+- Behaviour rules: ask clarifying questions before drafting, reference loaded context, don't generate until explicitly asked
+
+**`chat.html`** — the Electron chat UI for the AI Draft window. Key points:
+- Uses **Ollama** locally (`qwen2.5-coder:7b` at `localhost:11434`) via streaming `fetch`
+- On load, calls `ipcRenderer.invoke('get-context')` to get the system prompt + context summary (CLAUDE.md, plan.md, tasks.md, results.md, source files)
+- Renders context load results as `found`/`skipped` lines
+- **Send** button streams a normal chat turn; **Generate Draft** button injects a fixed `GENERATE_PROMPT` then parses the response for `## Plan` / `## Tasks` blocks
+- On successful parse, fires `ipcRenderer.send('nerve-draft-ready', { plan, tasks })` to the main window
+- Error handling distinguishes Ollama-not-running from other errors
+
+What would you like to do with these?
+
+---
+
