@@ -188,3 +188,30 @@ Done. Here's what changed across the three files:
 
 ---
 
+## Test by checking the context summary shows real files when zero-system project is selected in NERVE
+
+**Completed:** 2026-04-14 23:28:29
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Node.js isn't installed on Epyon, and NERVE is an Electron app that runs on Eva-01 (Windows). I can't execute the app here, but I can fully trace through `nerve-context.js` against the actual files on disk. Here's what `assembleContext('zero-system', '/home/crux/sync')` would produce on Epyon:
+
+**Expected context summary (all green ✓):**
+
+| # | Item | File exists? | Result |
+|---|------|-------------|--------|
+| 1 | `nerve-ai.md` | `/home/crux/projects/nerve/nerve-ai.md` ✓ | found |
+| 2 | `~/CLAUDE.md` | `/home/crux/CLAUDE.md` ✓ | found |
+| 3 | `zero-system/CLAUDE.md` | `/home/crux/projects/zero-system/CLAUDE.md` ✓ | found |
+| 4 | `zero-system/plan.md` | `/home/crux/sync/zero-system/plan.md` ✓ | found |
+| 5 | `zero-system/tasks.md` | `/home/crux/sync/zero-system/tasks.md` ✓ | found |
+| 6 | `zero-system/results.md` | `/home/crux/sync/zero-system/results.md` ✓ | found |
+| 7 | `zero-system/ source files` | `~/projects/zero-system/` has `CLAUDE.md`, `README.md`, `plan.md`, `tasks.md`, `results.md`, `dashboard.sh`, `task-pipeline.sh` + `tools/README.md` | found (8 files) |
+
+**The logic is correct.** All 7 sources resolve cleanly on Epyon — no skips, no fallbacks needed (all native paths hit directly, no sync-path fallback required).
+
+**To verify visually on Eva-01:** Open NERVE, set sync path to the Syncthing sync folder, select `zero-system` from the project list, click the chat button — the chat window should show 7 green `✓` lines (no grey `–` skips) on load.
+
+One caveat: on Windows, `~/projects/zero-system/` won't exist (that's Epyon-only). The code falls back to `<syncPath>/zero-system/` for the source files. That path exists at `<syncPath>\zero-system\` if Syncthing is syncing it — but it only contains `CLAUDE.md`, `plan.md`, `tasks.md`, `results.md` (not `dashboard.sh`, `task-pipeline.sh`). So on Eva-01 you'd see the source files line show 4 files from the sync path rather than 8 from the native path. That's expected and correct behavior.
+
+---
+
