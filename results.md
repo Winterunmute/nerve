@@ -426,3 +426,14 @@ Looks clean. Here's what was added:
 
 ---
 
+## On window load, fetch http://localhost:11434/api/tags and populate dropdown with available model names
+
+**Completed:** 2026-04-15 00:11:59
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The `loadModels()` function is already fully implemented at lines 308–334. It fetches `http://localhost:11434/api/tags` on `DOMContentLoaded`, populates the dropdown with sorted model names, and falls back to a placeholder if Ollama isn't running. The `modelSelect` element at line 240 is already in the DOM.
+
+This task is already complete — no changes needed.
+
+---
+

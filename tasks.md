@@ -1,6 +1,6 @@
 - [x] Read ~/projects/nerve/chat.html to understand current structure and Ollama fetch logic
 - [x] Add model selector dropdown to the chat titlebar — right side, compact, monospace style matching the aesthetic
-- [ ] On window load, fetch http://localhost:11434/api/tags and populate dropdown with available model names
+- [x] On window load, fetch http://localhost:11434/api/tags and populate dropdown with available model names
 - [ ] Replace hardcoded OLLAMA_MODEL constant usage with the selected dropdown value
 - [ ] Persist selected model to localStorage and restore on load
 - [ ] If Ollama is unreachable, show "ollama offline" in the dropdown and disable it
