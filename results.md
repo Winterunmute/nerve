@@ -297,3 +297,26 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## Read ~/projects/nerve/index.html and find the load existing dropdown and project name input field
+
+**Completed:** 2026-04-14 23:50:56
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Here are the two elements:
+
+**Project name input** — line 245:
+```html
+<input type="text" id="projInput" placeholder="weather-app" />
+```
+`id="projInput"`, inside `.proj-row > .field` with label "Project".
+
+**Load existing dropdown** — lines 259–261:
+```html
+<select id="projectSelect" style="...">
+  <option value="">— select project to edit —</option>
+</select>
+```
+`id="projectSelect"`, inside the `div` at line 256 with label "Load existing". Populated by `refreshProjects()` (line 363) and read by `loadProject()` (line 376).
+
+---
+

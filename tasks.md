@@ -1,6 +1,4 @@
-- [x] Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
-- [x] Rewrite nerve-ai.md: add explicit rule that Qwen must only reference files and paths it has actually seen in the provided context, never invent Maven commands, test runners, or tasks unrelated to the project
-- [x] Add instruction: if context is missing or unclear, ask the user before drafting
-- [x] Add instruction: the draft must reflect the conversation — do not generate a plan the user did not discuss
-- [x] Tighten the GENERATE_PROMPT in chat.html to be more directive about grounding
-- [x] Update ~/sync/nerve/plan.md to note the fix
+- [x] Read ~/projects/nerve/index.html and find the load existing dropdown and project name input field
+- [ ] When a project is selected from the dropdown, auto-populate the project name input field with the selected value
+- [ ] Ensure this works both when loading an existing project and just selecting from the dropdown without clicking load
+- [ ] Test that dispatch still works correctly after auto-populate
