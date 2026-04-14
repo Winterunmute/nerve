@@ -373,3 +373,41 @@ document.getElementById('projectSelect').addEventListener('change', function () 
 
 ---
 
+## Read ~/projects/nerve/chat.html to understand current structure and Ollama fetch logic
+
+**Completed:** 2026-04-15 00:10:35
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Here's a summary of `chat.html`'s structure and Ollama fetch logic:
+
+## Structure
+
+- **Titlebar** — drag region, project label, minimize/close buttons
+- **Loading bar** — animated 2px strip shown during context load
+- **Messages area** — flex column, scrollable, supports message types: `user`, `assistant`, `system`, `found`, `skipped`, `error`, `success`
+- **Footer** — text input + send button + "generate draft" button + clear button
+
+## Key globals
+
+- `OLLAMA_MODEL = 'qwen2.5-coder:7b'`
+- `OLLAMA_URL = 'http://localhost:11434/api/chat'`
+- `conversationHistory` — array of `{role, content}` pairs
+- `systemPrompt` — loaded via `ipcRenderer.invoke('get-context')` on `DOMContentLoaded`
+
+## Ollama fetch logic (`streamOllama`, lines 408–475)
+
+1. Prepends `systemPrompt` as a system message to `conversationHistory`
+2. POSTs to `OLLAMA_URL` with `{ model, messages, stream: true }`
+3. Reads the response as a `ReadableStream`, decoding NDJSON line-by-line
+4. Accumulates `chunk.message.content` into `content`, updating the stream div live
+5. On completion, pushes `{ role: 'assistant', content }` into `conversationHistory`
+6. On connection errors, shows a hint to run `ollama serve`
+
+## Generate draft flow (`handleGenerate`, lines 380–398)
+
+- Sends a fixed `GENERATE_PROMPT` to Ollama
+- Parses `## Plan` and `## Tasks` sections from the response via regex
+- Sends parsed `{ plan, tasks }` to main process via `ipcRenderer.send('nerve-draft-ready', ...)`
+
+---
+

@@ -1,4 +1,8 @@
-- [x] Read ~/projects/nerve/index.html and find the load existing dropdown and project name input field
-- [x] When a project is selected from the dropdown, auto-populate the project name input field with the selected value
-- [x] Ensure this works both when loading an existing project and just selecting from the dropdown without clicking load
-- [x] Test that dispatch still works correctly after auto-populate
+- [x] Read ~/projects/nerve/chat.html to understand current structure and Ollama fetch logic
+- [ ] Add model selector dropdown to the chat titlebar — right side, compact, monospace style matching the aesthetic
+- [ ] On window load, fetch http://localhost:11434/api/tags and populate dropdown with available model names
+- [ ] Replace hardcoded OLLAMA_MODEL constant usage with the selected dropdown value
+- [ ] Persist selected model to localStorage and restore on load
+- [ ] If Ollama is unreachable, show "ollama offline" in the dropdown and disable it
+- [ ] Handle the case where the previously saved model is no longer installed — fall back to first available
+- [ ] Update ~/sync/nerve/plan.md to note the change
