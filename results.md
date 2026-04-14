@@ -41,3 +41,26 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## Verify fix handles edge cases — empty lines, lines starting with -, lines already starting with - [ ]
+
+**Completed:** 2026-04-14 20:16:50
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The updated regex `^[-*]\s*(?:\[[x ]\]\s*)?` now optionally consumes an existing `[ ]` or `[x]` token (case-insensitive) after the leading dash/asterisk.
+
+Tracing all edge cases again with the fix:
+
+| Input line | After new replace | After `- [ ] ` prefix | Result |
+|---|---|---|---|
+| `` (empty) | `` | filtered out | OK |
+| `- foo` | `foo` | `- [ ] foo` | OK |
+| `foo` (no prefix) | `foo` | `- [ ] foo` | OK |
+| `- [ ] foo` | `foo` | `- [ ] foo` | OK |
+| `- [x] foo` | `foo` | `- [ ] foo` | OK (re-queued as undone) |
+| `- [X] foo` | `foo` | `- [ ] foo` | OK (case-insensitive) |
+| `* [ ] foo` | `foo` | `- [ ] foo` | OK |
+
+All edge cases handled. The regex change is minimal and surgical — it only adds an optional non-capturing group for the checkbox portion, falling back gracefully when it's absent.
+
+---
+

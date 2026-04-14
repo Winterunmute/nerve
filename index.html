@@ -316,7 +316,7 @@ function parseContent(text) {
 
   const tasks = tasksRaw
     .split('\n')
-    .map(l => l.replace(/^[-*]\s*/, '').trim())
+    .map(l => l.replace(/^[-*]\s*(?:\[[x ]\]\s*)?/i, '').trim())
     .filter(l => l.length > 0)
 
   return { plan, tasks }

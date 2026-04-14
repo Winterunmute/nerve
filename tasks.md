@@ -1,5 +1,5 @@
 - [x] Read ~/projects/nerve/main.js and ~/projects/nerve/index.html to understand how tasks are parsed from the textarea and written to tasks.md
 - [x] Identify why only the first task gets a - [ ] prefix
 - [x] Fix the parsing logic so all task lines get - [ ] prefixes
-- [ ] Verify fix handles edge cases — empty lines, lines starting with -, lines already starting with - [ ]
+- [x] Verify fix handles edge cases — empty lines, lines starting with -, lines already starting with - [ ]
 - [ ] Update ~/sync/nerve/plan.md to note the fix
