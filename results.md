@@ -437,3 +437,17 @@ This task is already complete — no changes needed.
 
 ---
 
+## Replace hardcoded OLLAMA_MODEL constant usage with the selected dropdown value
+
+**Completed:** 2026-04-15 00:12:37
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Three changes made:
+
+1. `let OLLAMA_MODEL` → `const OLLAMA_MODEL` — it's now a fixed default, not a mutable variable
+2. Removed the `change` event listener that was mutating `OLLAMA_MODEL` — no longer needed
+3. Removed the `OLLAMA_MODEL = names[0]` mutation in `loadModels` — just sets `modelSelect.value` directly
+4. `streamOllama` now reads `modelSelect.value` directly at call time, so whatever is selected in the dropdown at that moment is what gets sent to Ollama
+
+---
+

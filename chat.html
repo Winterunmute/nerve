@@ -260,7 +260,7 @@
 <script>
 const { ipcRenderer } = require('electron')
 
-let   OLLAMA_MODEL = 'qwen2.5-coder:7b'
+const OLLAMA_MODEL = 'qwen2.5-coder:7b'
 const OLLAMA_URL   = 'http://localhost:11434/api/chat'
 const OLLAMA_TAGS  = 'http://localhost:11434/api/tags'
 
@@ -320,8 +320,7 @@ async function loadModels() {
       modelSelect.appendChild(opt)
     }
     if (names.length && !names.includes(OLLAMA_MODEL)) {
-      OLLAMA_MODEL = names[0]
-      modelSelect.value = OLLAMA_MODEL
+      modelSelect.value = names[0]
     }
   } catch {
     // Ollama not running — seed with current model as placeholder
@@ -330,7 +329,6 @@ async function loadModels() {
     opt.textContent = OLLAMA_MODEL
     modelSelect.appendChild(opt)
   }
-  modelSelect.addEventListener('change', () => { OLLAMA_MODEL = modelSelect.value })
 }
 
 // ── context loading ───────────────────────────────────────────────────────────
@@ -475,7 +473,7 @@ async function streamOllama() {
     const response = await fetch(OLLAMA_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: OLLAMA_MODEL, messages, stream: true })
+      body: JSON.stringify({ model: modelSelect.value, messages, stream: true })
     })
 
     if (!response.ok) {
