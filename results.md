@@ -543,3 +543,12 @@ Done. Added a short example dispatch to `nerve-ai.md` that uses actual project p
 
 ---
 
+## Tighten the GENERATE_PROMPT in chat.html to stay high-level
+
+**Completed:** 2026-04-15 00:41:21
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Reduced from 8 lines of verbose grounding to 2 concise constraints. The intent is the same — don't hallucinate paths, don't add untouched features — but it's compact enough that the model reads it as a boundary rather than a checklist to work around.
+
+---
+
