@@ -488,3 +488,16 @@ Two changes:
 
 ---
 
+## Update ~/sync/nerve/plan.md to note the change
+
+**Completed:** 2026-04-15 00:14:46
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. Updated `/home/crux/sync/nerve/plan.md` with:
+
+- A brief description of what NERVE is
+- A dated changelog entry (2026-04-15) documenting all aspects of the Ollama model selector feature
+- A high-level architecture diagram showing how the pieces fit together
+
+---
+
