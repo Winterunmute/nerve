@@ -307,6 +307,10 @@ pathInput.addEventListener('input', () => { updatePreview(); refreshProjects() }
 // Load projects on startup
 window.addEventListener('DOMContentLoaded', refreshProjects)
 
+document.getElementById('projectSelect').addEventListener('change', function () {
+  if (this.value) { projInput.value = this.value; updatePreview() }
+})
+
 function parseContent(text) {
   const planMatch  = text.match(/^##\s*Plan\s*\n([\s\S]*?)(?=^##\s*Tasks|\s*$)/mi)
   const tasksMatch = text.match(/^##\s*Tasks\s*\n([\s\S]*)/mi)

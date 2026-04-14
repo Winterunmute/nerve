@@ -1,4 +1,4 @@
 - [x] Read ~/projects/nerve/index.html and find the load existing dropdown and project name input field
-- [ ] When a project is selected from the dropdown, auto-populate the project name input field with the selected value
+- [x] When a project is selected from the dropdown, auto-populate the project name input field with the selected value
 - [ ] Ensure this works both when loading an existing project and just selecting from the dropdown without clicking load
 - [ ] Test that dispatch still works correctly after auto-populate

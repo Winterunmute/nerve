@@ -320,3 +320,12 @@ Here are the two elements:
 
 ---
 
+## When a project is selected from the dropdown, auto-populate the project name input field with the selected value
+
+**Completed:** 2026-04-14 23:51:12
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Now when you pick a project from the "Load existing" dropdown, the Project input field is auto-populated and the preview path updates — no need to click "load" first.
+
+---
+
