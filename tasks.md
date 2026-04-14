@@ -4,5 +4,5 @@
 - [x] Replace hardcoded OLLAMA_MODEL constant usage with the selected dropdown value
 - [x] Persist selected model to localStorage and restore on load
 - [x] If Ollama is unreachable, show "ollama offline" in the dropdown and disable it
-- [ ] Handle the case where the previously saved model is no longer installed — fall back to first available
+- [x] Handle the case where the previously saved model is no longer installed — fall back to first available
 - [ ] Update ~/sync/nerve/plan.md to note the change

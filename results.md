@@ -477,3 +477,14 @@ Changes made:
 
 ---
 
+## Handle the case where the previously saved model is no longer installed — fall back to first available
+
+**Completed:** 2026-04-15 00:14:05
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Two changes:
+- Dropped the intermediate `OLLAMA_MODEL` fallback — if the saved model is gone, go straight to first available (matches the task spec and avoids a pointless extra check)
+- Added `localStorage.setItem` when falling back, so the stale entry is replaced and future loads don't repeat the same fallback
+
+---
+

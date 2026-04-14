@@ -321,10 +321,9 @@ async function loadModels() {
     }
     if (saved && names.includes(saved)) {
       modelSelect.value = saved
-    } else if (names.includes(OLLAMA_MODEL)) {
-      modelSelect.value = OLLAMA_MODEL
     } else if (names.length) {
       modelSelect.value = names[0]
+      localStorage.setItem('nerve-model', names[0])
     }
   } catch {
     // Ollama unreachable — show offline indicator and disable the selector
