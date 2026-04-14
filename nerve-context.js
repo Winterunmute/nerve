@@ -82,12 +82,16 @@ async function assembleContext(projectName, syncPath) {
   if (nerveAi) parts.push(nerveAi)
 
   // 2. Zero System conventions
+  // Prefer ~/CLAUDE.md (native on Epyon); fall back to <syncPath>/CLAUDE.md (available on Windows via Syncthing)
   const homeConventions = readSafe(path.join(home, 'CLAUDE.md'))
+    || (syncPath ? readSafe(path.join(syncPath, 'CLAUDE.md')) : null)
   if (homeConventions) {
     parts.push(`## Zero System Conventions (~/CLAUDE.md)\n\n${homeConventions}`)
   }
 
+  // Prefer ~/projects/zero-system/CLAUDE.md; fall back to <syncPath>/zero-system/CLAUDE.md
   const zeroConventions = readSafe(path.join(home, 'projects', 'zero-system', 'CLAUDE.md'))
+    || (syncPath ? readSafe(path.join(syncPath, 'zero-system', 'CLAUDE.md')) : null)
   if (zeroConventions) {
     parts.push(`## Zero System Project Conventions (~/projects/zero-system/CLAUDE.md)\n\n${zeroConventions}`)
   }
@@ -107,19 +111,24 @@ async function assembleContext(projectName, syncPath) {
     }
   }
 
-  // 4. Project file tree
+  // 4. Project file tree + source files
+  // Prefer ~/projects/<project>/ (native on Epyon); fall back to <syncPath>/<project>/ (available on Windows)
   if (projectName) {
-    const projDir = path.join(home, 'projects', projectName)
-    if (fs.existsSync(projDir)) {
+    const nativeProjDir = path.join(home, 'projects', projectName)
+    const syncProjDir   = syncPath ? path.join(syncPath, projectName) : null
+    const projDir = fs.existsSync(nativeProjDir) ? nativeProjDir
+      : (syncProjDir && fs.existsSync(syncProjDir) ? syncProjDir : null)
+
+    if (projDir) {
       const tree = buildFileTree(projDir)
       if (tree) {
-        parts.push(`## Project File Tree — ~/projects/${projectName}/\n\`\`\`\n${tree}\`\`\``)
+        parts.push(`## Project File Tree — ${projDir}\n\`\`\`\n${tree}\`\`\``)
       }
 
       // 5. Key source files (capped at ~6000 tokens)
       const sources = collectSources(projDir)
       if (sources.length > 0) {
-        const sourceParts = [`## Key Source Files — ~/projects/${projectName}/`]
+        const sourceParts = [`## Key Source Files — ${projDir}`]
         for (const f of sources) {
           const rel = path.relative(projDir, f.path).replace(/\\/g, '/')
           const ext = path.extname(f.path).slice(1) || 'text'

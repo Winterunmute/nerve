@@ -145,3 +145,26 @@ Node.js `path` module is **platform-aware** — on Windows it automatically uses
 
 ---
 
+## Fix any path issues — ensure CLAUDE.md, plan.md, tasks.md, results.md and source files are found
+
+**Completed:** 2026-04-14 23:25:36
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. Here's a summary of what changed:
+
+**`nerve-context.js` — three fallback paths added:**
+
+1. **`~/CLAUDE.md`** — if not found at `os.homedir()/CLAUDE.md` (Windows), falls back to `<syncPath>/CLAUDE.md`
+2. **`~/projects/zero-system/CLAUDE.md`** — falls back to `<syncPath>/zero-system/CLAUDE.md`
+3. **`~/projects/<project>/`** — if the native projects dir doesn't exist (Windows), falls back to `<syncPath>/<project>/` for the file tree and source file collection
+
+**On Epyon, synced the convention files:**
+- `~/CLAUDE.md` → `~/sync/CLAUDE.md`
+- `~/projects/zero-system/CLAUDE.md` → `~/sync/zero-system/CLAUDE.md`
+
+Syncthing will propagate these to `C:\Users\Ricka\sync\CLAUDE.md` and `C:\Users\Ricka\sync\zero-system\CLAUDE.md` on Eva-01, where the fallback paths will find them.
+
+**Note:** The `~/sync/CLAUDE.md` and `~/sync/zero-system/CLAUDE.md` copies are static snapshots — they'll need to be re-copied if the originals change. A follow-up task could automate that (e.g. a symlink or a pipeline hook).
+
+---
+
