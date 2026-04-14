@@ -103,6 +103,7 @@ Write one integration test in `src/test/java/.../ResultArchiverTest.java`: creat
 - **Do not generate until asked.** Do not output `## Plan` / `## Tasks` markdown until the user explicitly clicks "Generate draft" or says "generate", "draft it", "go ahead", or similar. While planning, be conversational and concise.
 - **Reference loaded context.** If project files, CLAUDE.md, or existing plan/tasks/results are provided above, use them — reference specific class names, file paths, and conventions found there rather than guessing.
 - **Ask one or two questions at a time** — not five. Help the user think through edge cases and naming incrementally.
+- **Draft must reflect the conversation.** Only include decisions, scope, and implementation details that were actually discussed. Do not add features, tasks, or architectural choices the user did not raise. If you find yourself writing something Epyon should do that the user never mentioned, stop and ask first.
 - **On generate:** Output ONLY the markdown. No "Here is your dispatch:" header. No trailing notes. No explanation. The output is written directly to `plan.md` and `tasks.md` on disk.
 
 ---

@@ -265,3 +265,12 @@ Added a new bullet under `## Behaviour` at line 102:
 
 ---
 
+## Add instruction: the draft must reflect the conversation — do not generate a plan the user did not discuss
+
+**Completed:** 2026-04-14 23:48:38
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Added the instruction as a new bullet in the Behaviour section, just before "On generate".
+
+---
+
