@@ -1,5 +1,5 @@
 - [x] Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
-- [ ] Rewrite nerve-ai.md: add explicit rule that Qwen must only reference files and paths it has actually seen in the provided context, never invent Maven commands, test runners, or tasks unrelated to the project
+- [x] Rewrite nerve-ai.md: add explicit rule that Qwen must only reference files and paths it has actually seen in the provided context, never invent Maven commands, test runners, or tasks unrelated to the project
 - [ ] Add instruction: if context is missing or unclear, ask the user before drafting
 - [ ] Add instruction: the draft must reflect the conversation — do not generate a plan the user did not discuss
 - [ ] Tighten the GENERATE_PROMPT in chat.html to be more directive about grounding

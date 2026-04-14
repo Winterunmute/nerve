@@ -239,3 +239,18 @@ What would you like to do with these?
 
 ---
 
+## Rewrite nerve-ai.md: add explicit rule that Qwen must only reference files and paths it has actually seen in the provided context, never invent Maven commands, test runners, or tasks unrelated to the project
+
+**Completed:** 2026-04-14 23:47:54
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The rule is added at the end of the file as a distinct section with its own heading so it stands out and can't be missed. It covers:
+
+- **No invented file paths** — must have been seen in loaded context
+- **No assumed build commands** — Maven/Gradle/npm etc. only if the project actually uses them; explicitly calls out that the example dispatch's `./mvnw` is illustrative only
+- **No assumed test runners or conventions** — ask how tests work before writing a test task
+- **No guessed tech stack** — file extensions don't justify inferring a build system
+- **Explicit override note** — the rule overrides pattern-matching defaults
+
+---
+
