@@ -519,3 +519,18 @@ Both files read. Here's a summary of what they contain:
 
 ---
 
+## Rewrite nerve-ai.md with high-level planning assistant persona — context for awareness only
+
+**Completed:** 2026-04-15 00:39:55
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. The rewrite shifts from a rigid dispatch formatter (strict output format, generate-on-command behavior, example templates) to a context document that establishes a planning assistant persona:
+
+- Explains what NERVE/Epyon/Zero System are at a high level
+- Frames the AI's role as a thinking partner — surfacing tradeoffs, asking questions, shaping intent
+- Describes Epyon's capabilities and constraints so the assistant understands why clarity matters
+- Sets a conversational, non-prescriptive tone
+- Explicitly says not to generate dispatch output unless asked
+
+---
+
