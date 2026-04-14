@@ -327,17 +327,18 @@ async function loadModels() {
       modelSelect.value = names[0]
     }
   } catch {
-    // Ollama not running — seed with saved or default model as placeholder
-    const fallback = saved || OLLAMA_MODEL
+    // Ollama unreachable — show offline indicator and disable the selector
     const opt = document.createElement('option')
-    opt.value = fallback
-    opt.textContent = fallback
+    opt.value = ''
+    opt.textContent = 'ollama offline'
     modelSelect.appendChild(opt)
+    modelSelect.disabled = true
+    modelSelect.style.color = 'var(--muted)'
   }
 }
 
 modelSelect.addEventListener('change', () => {
-  localStorage.setItem('nerve-model', modelSelect.value)
+  if (modelSelect.value) localStorage.setItem('nerve-model', modelSelect.value)
 })
 
 // ── context loading ───────────────────────────────────────────────────────────

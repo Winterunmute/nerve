@@ -465,3 +465,15 @@ Done. Changes made to `chat.html`:
 
 ---
 
+## If Ollama is unreachable, show "ollama offline" in the dropdown and disable it
+
+**Completed:** 2026-04-15 00:13:33
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Changes made:
+
+- **Offline state**: the `catch` block now clears the dropdown, adds a single `"ollama offline"` option with an empty value, disables the `<select>`, and dims it to `--muted` to match the visual language of other disabled controls.
+- **localStorage guard**: the `change` listener skips saving when the value is empty, so a failed fetch won't overwrite the user's last-known good model selection.
+
+---
+
