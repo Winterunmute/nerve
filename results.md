@@ -501,3 +501,21 @@ Done. Updated `/home/crux/sync/nerve/plan.md` with:
 
 ---
 
+## Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
+
+**Completed:** 2026-04-15 00:39:18
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Both files read. Here's a summary of what they contain:
+
+**`nerve-ai.md`** — System prompt for the AI draft assistant. Defines the AI's role (dispatch drafting assistant), output format (only `## Plan` + `## Tasks` markdown, nothing else), rules for plan/tasks generation, and a grounding rule: only reference files/paths/commands seen in loaded context, never invent structure.
+
+**`chat.html`** — The full chat UI. Key points:
+- `OLLAMA_MODEL = 'qwen2.5-coder:7b'` is still hardcoded at line 263, but the dynamic model selector (`modelSelect`) was already implemented and that constant appears unused — `streamOllama()` correctly reads `modelSelect.value` at line 485
+- `loadModels()` fetches `/api/tags`, populates the dropdown, restores from `localStorage`, falls back to first model or shows "ollama offline"
+- `loadContext()` calls `ipcRenderer.invoke('get-context')` to get the system prompt and project context
+- `handleGenerate()` parses the response for `## Plan` / `## Tasks` and sends via `ipcRenderer.send('nerve-draft-ready', { plan, tasks })`
+- The `OLLAMA_MODEL` constant at line 263 is vestigial — it's declared but never used now that the dropdown is wired up
+
+---
+

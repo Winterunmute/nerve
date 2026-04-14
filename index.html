@@ -208,6 +208,44 @@
   .status { font-size: 11px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .status.ok { color: var(--green); }
   .status.err { color: var(--red); }
+
+  .schedule-wrap {
+    display: flex; align-items: center; gap: 7px;
+    border-left: 1px solid var(--border); padding-left: 10px;
+  }
+  .schedule-check-label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--muted); cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+  .schedule-check-label:hover { color: var(--text); }
+  .schedule-check-label input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 13px; height: 13px;
+    border: 1px solid var(--border-bright); border-radius: 2px;
+    background: var(--surface); cursor: pointer;
+    transition: all 0.15s; flex-shrink: 0;
+    position: relative;
+  }
+  .schedule-check-label input[type="checkbox"]:checked {
+    background: var(--green-glow); border-color: var(--green-dim);
+  }
+  .schedule-check-label input[type="checkbox"]:checked::after {
+    content: '✓'; position: absolute; top: -1px; left: 1px;
+    font-size: 10px; color: var(--green); line-height: 1;
+  }
+  .schedule-time-input {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 5px 8px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-bright); outline: none;
+    transition: border-color 0.15s;
+    color-scheme: dark;
+    width: 90px;
+  }
+  .schedule-time-input:focus { border-color: var(--green-dim); background: var(--surface2); }
+  .schedule-time-input::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -284,17 +322,31 @@
   <button class="btn primary" onclick="dispatch()">◉ dispatch to epyon</button>
   <button class="btn" onclick="openAIChat()">✦ draft with AI</button>
   <button class="btn" onclick="clearAll()">clear</button>
+  <div class="schedule-wrap">
+    <label class="schedule-check-label">
+      <input type="checkbox" id="scheduleCheck" onchange="toggleScheduleTime()" />
+      schedule
+    </label>
+    <input type="time" id="scheduleTime" class="schedule-time-input" style="display:none" value="08:00" />
+  </div>
   <span class="status" id="status"></span>
 </div>
 
 <script>
 const { ipcRenderer } = require('electron')
 
-const projInput = document.getElementById('projInput')
-const pathInput = document.getElementById('pathInput')
-const editor    = document.getElementById('editor')
-const statusEl  = document.getElementById('status')
-const preview   = document.getElementById('preview')
+const projInput    = document.getElementById('projInput')
+const pathInput    = document.getElementById('pathInput')
+const editor       = document.getElementById('editor')
+const statusEl     = document.getElementById('status')
+const preview      = document.getElementById('preview')
+const scheduleCheck = document.getElementById('scheduleCheck')
+const scheduleTime  = document.getElementById('scheduleTime')
+
+function toggleScheduleTime() {
+  scheduleTime.style.display = scheduleCheck.checked ? '' : 'none'
+  if (scheduleCheck.checked) scheduleTime.focus()
+}
 
 function updatePreview() {
   const proj = projInput.value.trim() || '<project>'
@@ -349,11 +401,15 @@ async function dispatch() {
   if (!plan)         { setStatus('✗ need a ## Plan section', 'err'); return }
   if (!tasks.length) { setStatus('✗ need a ## Tasks section with at least one - item', 'err'); return }
 
+  const scheduledAt = scheduleCheck.checked ? scheduleTime.value : null
+  const finalPlan = scheduledAt ? `run at ${scheduledAt}\n${plan}` : plan
+
   const result = await ipcRenderer.invoke('save-project', {
     projectName: proj,
     syncPath: pathInput.value.trim(),
-    plan,
-    tasks
+    plan: finalPlan,
+    tasks,
+    scheduledAt
   })
 
   if (result.success) {
@@ -405,6 +461,9 @@ function clearAll() {
   projInput.value = ''
   updatePreview()
   statusEl.textContent = ''
+  scheduleCheck.checked = false
+  scheduleTime.style.display = 'none'
+  scheduleTime.value = '08:00'
   projInput.focus()
 }
 

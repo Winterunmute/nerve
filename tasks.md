@@ -1,8 +1,5 @@
-- [x] Read ~/projects/nerve/chat.html to understand current structure and Ollama fetch logic
-- [x] Add model selector dropdown to the chat titlebar — right side, compact, monospace style matching the aesthetic
-- [x] On window load, fetch http://localhost:11434/api/tags and populate dropdown with available model names
-- [x] Replace hardcoded OLLAMA_MODEL constant usage with the selected dropdown value
-- [x] Persist selected model to localStorage and restore on load
-- [x] If Ollama is unreachable, show "ollama offline" in the dropdown and disable it
-- [x] Handle the case where the previously saved model is no longer installed — fall back to first available
-- [x] Update ~/sync/nerve/plan.md to note the change
+- [x] Read ~/projects/nerve/nerve-ai.md and ~/projects/nerve/chat.html
+- [ ] Rewrite nerve-ai.md with high-level planning assistant persona — context for awareness only
+- [ ] Replace example dispatch with a short high-level one — no line numbers, no invented paths
+- [ ] Tighten the GENERATE_PROMPT in chat.html to stay high-level
+- [ ] Update ~/sync/nerve/plan.md to note the change
