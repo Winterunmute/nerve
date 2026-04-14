@@ -288,3 +288,12 @@ The updated `GENERATE_PROMPT` now:
 
 ---
 
+## Update ~/sync/nerve/plan.md to note the fix
+
+**Completed:** 2026-04-14 23:49:53
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+`~/sync/nerve/plan.md` updated. It now documents the grounding enforcement fix: what the problem was, the root cause, and the specific changes made to `nerve-ai.md` and `chat.html`. Syncthing will propagate this to Eva-01.
+
+---
+

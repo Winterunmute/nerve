@@ -3,4 +3,4 @@
 - [x] Add instruction: if context is missing or unclear, ask the user before drafting
 - [x] Add instruction: the draft must reflect the conversation — do not generate a plan the user did not discuss
 - [x] Tighten the GENERATE_PROMPT in chat.html to be more directive about grounding
-- [ ] Update ~/sync/nerve/plan.md to note the fix
+- [x] Update ~/sync/nerve/plan.md to note the fix
