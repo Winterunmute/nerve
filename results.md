@@ -254,3 +254,14 @@ The rule is added at the end of the file as a distinct section with its own head
 
 ---
 
+## Add instruction: if context is missing or unclear, ask the user before drafting
+
+**Completed:** 2026-04-14 23:48:19
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Added a new bullet under `## Behaviour` at line 102:
+
+> **Ask when context is missing or unclear.** If no project files are loaded, or the loaded context does not answer a question you need to draft confidently (tech stack, file locations, build tool, test conventions), stop and ask the user before producing any dispatch. Do not fill gaps with assumptions or pattern-matching.
+
+---
+
