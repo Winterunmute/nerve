@@ -29,3 +29,15 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## Fix the parsing logic so all task lines get - [ ] prefixes
+
+**Completed:** 2026-04-14 20:16:01
+
+**Claude Code exited with code 143**
+
+```
+
+```
+
+---
+
