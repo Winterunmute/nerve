@@ -17,3 +17,15 @@ The `save-project` handler in `main.js:144` already correctly wraps each parsed 
 
 ---
 
+## Identify why only the first task gets a - [ ] prefix
+
+**Completed:** 2026-04-14 19:55:06
+
+**Claude Code exited with code 143**
+
+```
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+```
+
+---
+
