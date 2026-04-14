@@ -2,4 +2,4 @@
 - [x] Rewrite nerve-ai.md with high-level planning assistant persona — context for awareness only
 - [x] Replace example dispatch with a short high-level one — no line numbers, no invented paths
 - [x] Tighten the GENERATE_PROMPT in chat.html to stay high-level
-- [ ] Update ~/sync/nerve/plan.md to note the change
+- [x] Update ~/sync/nerve/plan.md to note the change

@@ -552,3 +552,12 @@ Reduced from 8 lines of verbose grounding to 2 concise constraints. The intent i
 
 ---
 
+## Update ~/sync/nerve/plan.md to note the change
+
+**Completed:** 2026-04-15 00:41:35
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+`~/sync/nerve/plan.md` updated with the dynamic Ollama model selector change from 2026-04-15.
+
+---
+
