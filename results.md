@@ -168,3 +168,23 @@ Syncthing will propagate these to `C:\Users\Ricka\sync\CLAUDE.md` and `C:\Users\
 
 ---
 
+## Add a context summary to the chat window on load: list each source it found or skipped
+
+**Completed:** 2026-04-14 23:26:58
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Done. Here's what changed across the three files:
+
+**`nerve-context.js`** — `assembleContext()` now returns `{ context, summary }` instead of just the context string. As each source is checked, it pushes to `summary` with `{ label, status: 'found'|'skipped', note? }`. Sources tracked:
+- `nerve-ai.md`
+- `~/CLAUDE.md` (with fallback path noted if sync copy was used)
+- `zero-system/CLAUDE.md` (same)
+- `<project>/plan.md`, `tasks.md`, `results.md` (or "no project selected" if skipped)
+- `<project>/ source files` (count and directory)
+
+**`main.js`** — `get-context` handler destructures `{ context, summary }` and passes both back.
+
+**`chat.html`** — `loadContext()` iterates `result.summary` and renders each item as a `found` (green `✓`) or `skipped` (dim `–`) message. Two new CSS classes (`found`, `skipped`) give visual distinction without conflating them with errors or system notices.
+
+---
+

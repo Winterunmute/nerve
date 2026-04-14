@@ -76,24 +76,46 @@ function collectSources(dir, budget = { remaining: SOURCE_CAP }) {
 async function assembleContext(projectName, syncPath) {
   const home = os.homedir()
   const parts = []
+  const summary = [] // { label, status: 'found'|'skipped', note? }
+
+  function found(label, note) { summary.push({ label, status: 'found', note }) }
+  function skipped(label, note) { summary.push({ label, status: 'skipped', note }) }
 
   // 1. nerve-ai.md — system prompt and format spec
-  const nerveAi = readSafe(path.join(__dirname, 'nerve-ai.md'))
-  if (nerveAi) parts.push(nerveAi)
+  const nerveAiPath = path.join(__dirname, 'nerve-ai.md')
+  const nerveAi = readSafe(nerveAiPath)
+  if (nerveAi) {
+    parts.push(nerveAi)
+    found('nerve-ai.md')
+  } else {
+    skipped('nerve-ai.md', 'not found')
+  }
 
   // 2. Zero System conventions
   // Prefer ~/CLAUDE.md (native on Epyon); fall back to <syncPath>/CLAUDE.md (available on Windows via Syncthing)
-  const homeConventions = readSafe(path.join(home, 'CLAUDE.md'))
-    || (syncPath ? readSafe(path.join(syncPath, 'CLAUDE.md')) : null)
+  const homeClaude = path.join(home, 'CLAUDE.md')
+  const syncClaude = syncPath ? path.join(syncPath, 'CLAUDE.md') : null
+  const homeConventionsRaw = readSafe(homeClaude)
+  const homeConventions = homeConventionsRaw
+    || (syncClaude ? readSafe(syncClaude) : null)
   if (homeConventions) {
     parts.push(`## Zero System Conventions (~/CLAUDE.md)\n\n${homeConventions}`)
+    found('~/CLAUDE.md', homeConventionsRaw ? null : `via ${syncClaude}`)
+  } else {
+    skipped('~/CLAUDE.md', 'not found')
   }
 
   // Prefer ~/projects/zero-system/CLAUDE.md; fall back to <syncPath>/zero-system/CLAUDE.md
-  const zeroConventions = readSafe(path.join(home, 'projects', 'zero-system', 'CLAUDE.md'))
-    || (syncPath ? readSafe(path.join(syncPath, 'zero-system', 'CLAUDE.md')) : null)
+  const nativeZero = path.join(home, 'projects', 'zero-system', 'CLAUDE.md')
+  const syncZero   = syncPath ? path.join(syncPath, 'zero-system', 'CLAUDE.md') : null
+  const zeroConventionsRaw = readSafe(nativeZero)
+  const zeroConventions = zeroConventionsRaw
+    || (syncZero ? readSafe(syncZero) : null)
   if (zeroConventions) {
     parts.push(`## Zero System Project Conventions (~/projects/zero-system/CLAUDE.md)\n\n${zeroConventions}`)
+    found('zero-system/CLAUDE.md', zeroConventionsRaw ? null : `via ${syncZero}`)
+  } else {
+    skipped('zero-system/CLAUDE.md', 'not found')
   }
 
   // 3. Existing dispatch context for this project
@@ -109,6 +131,14 @@ async function assembleContext(projectName, syncPath) {
       if (existingResults) lines.push(`\n### results.md\n${existingResults}`)
       parts.push(lines.join('\n'))
     }
+    if (existingPlan)    found(`${projectName}/plan.md`)
+    else                 skipped(`${projectName}/plan.md`, 'not found')
+    if (existingTasks)   found(`${projectName}/tasks.md`)
+    else                 skipped(`${projectName}/tasks.md`, 'not found')
+    if (existingResults) found(`${projectName}/results.md`)
+    else                 skipped(`${projectName}/results.md`, 'not found')
+  } else {
+    skipped('dispatch context', projectName ? 'no sync path' : 'no project selected')
   }
 
   // 4. Project file tree + source files
@@ -135,11 +165,16 @@ async function assembleContext(projectName, syncPath) {
           sourceParts.push(`\n### ${rel}\n\`\`\`${ext}\n${f.content}\n\`\`\``)
         }
         parts.push(sourceParts.join('\n'))
+        found(`${projectName}/ source files`, `${sources.length} file${sources.length !== 1 ? 's' : ''} from ${projDir}`)
+      } else {
+        skipped(`${projectName}/ source files`, 'none found')
       }
+    } else {
+      skipped(`${projectName}/ project dir`, 'not found locally or in sync path')
     }
   }
 
-  return parts.join('\n\n---\n\n')
+  return { context: parts.join('\n\n---\n\n'), summary }
 }
 
 module.exports = { assembleContext }

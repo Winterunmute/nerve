@@ -121,6 +121,10 @@
   .msg.assistant .msg-body   { color: var(--text); }
   .msg.system   .msg-prefix { color: var(--muted); }
   .msg.system   .msg-body   { color: var(--muted); font-style: italic; }
+  .msg.found    .msg-prefix { color: var(--green-dim); }
+  .msg.found    .msg-body   { color: var(--muted); }
+  .msg.skipped  .msg-prefix { color: var(--border-bright); }
+  .msg.skipped  .msg-body   { color: var(--border-bright); }
   .msg.error    .msg-prefix { color: var(--red); }
   .msg.error    .msg-body   { color: var(--red); }
   .msg.success  .msg-prefix { color: var(--green); }
@@ -280,13 +284,26 @@ async function loadContext() {
 
     if (result.projectName) {
       projLabel.textContent = '— ' + result.projectName
-      addMsg('system', '·', `Context loaded. Project: ${result.projectName}`)
-    } else {
-      addMsg('system', '·', 'Context loaded. No project selected — describe what you want to build.')
+    }
+
+    // Context summary — one line per source
+    if (Array.isArray(result.summary) && result.summary.length > 0) {
+      for (const item of result.summary) {
+        const note = item.note ? ` (${item.note})` : ''
+        if (item.status === 'found') {
+          addMsg('found', '✓', item.label + note)
+        } else {
+          addMsg('skipped', '–', item.label + note)
+        }
+      }
     }
 
     if (!systemPrompt) {
       addMsg('system', '·', 'Warning: nerve-ai.md not found. Operating without system prompt.')
+    }
+
+    if (!result.projectName) {
+      addMsg('system', '·', 'No project selected — describe what you want to build.')
     }
   } catch (err) {
     addMsg('error', '✗', 'Failed to load context: ' + err.message)

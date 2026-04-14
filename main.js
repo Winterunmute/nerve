@@ -117,8 +117,8 @@ ipcMain.handle('open-chat', async (event, { projectName, syncPath }) => {
 
 // IPC: assemble and return context for the chat window
 ipcMain.handle('get-context', async () => {
-  const context = await assembleContext(chatParams.projectName, chatParams.syncPath)
-  return { context, projectName: chatParams.projectName, syncPath: chatParams.syncPath }
+  const { context, summary } = await assembleContext(chatParams.projectName, chatParams.syncPath)
+  return { context, summary, projectName: chatParams.projectName, syncPath: chatParams.syncPath }
 })
 
 // IPC: chat window sends draft — forward to main window renderer
