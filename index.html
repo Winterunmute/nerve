@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NERVE</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --border-bright: #3a3a3a;
+    --green: #98c379;
+    --green-dim: #4a6340;
+    --green-glow: rgba(152, 195, 121, 0.12);
+    --blue: #61afef;
+    --red: #e06c75;
+    --muted: #5c6370;
+    --text: #abb2bf;
+    --text-bright: #dcdfe4;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .titlebar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    -webkit-app-region: drag;
+    flex-shrink: 0;
+  }
+  .title-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green-glow);
+    flex-shrink: 0;
+    -webkit-app-region: no-drag;
+  }
+  .titlebar-text { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; flex: 1; }
+  .titlebar-btn {
+    width: 28px; height: 28px; border: none; background: none;
+    color: var(--muted); font-size: 14px; cursor: pointer;
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    -webkit-app-region: no-drag; transition: all 0.15s;
+  }
+  .titlebar-btn:hover { background: var(--surface2); color: var(--text-bright); }
+  .titlebar-btn.close:hover { background: rgba(224,108,117,0.2); color: var(--red); }
+
+  .body {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 18px 20px 0; overflow: hidden;
+  }
+
+  .header { margin-bottom: 14px; }
+  .zero-label { font-size: 10px; color: var(--green); letter-spacing: 0.2em; margin-bottom: 4px; }
+  .prompt-line { display: flex; align-items: center; gap: 8px; }
+  .ps1 { color: var(--green); font-size: 13px; }
+  .cmd { color: var(--blue); font-size: 13px; }
+  .cursor {
+    display: inline-block; width: 8px; height: 14px;
+    background: var(--green); margin-left: 2px;
+    animation: blink 1s step-end infinite; opacity: 0.8; vertical-align: middle;
+  }
+  @keyframes blink { 0%,100%{opacity:0.8} 50%{opacity:0} }
+
+  /* ── NERVE logo ── */
+  .nerve-logo { margin-bottom: 4px; }
+  .nerve-letters {
+    display: flex; align-items: baseline; gap: 2px;
+    margin-bottom: 4px;
+  }
+  .nerve-letters span {
+    font-size: 28px; font-weight: 700; letter-spacing: 0.05em;
+    color: var(--green); font-family: var(--mono);
+    text-shadow: 0 0 12px rgba(152, 195, 121, 0.4);
+    position: relative;
+  }
+  .nerve-letters span::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: var(--green-dim);
+    margin-top: 2px;
+    border-radius: 1px;
+  }
+  .nerve-dot {
+    font-size: 14px !important;
+    color: var(--muted) !important;
+    margin: 0 1px;
+    font-weight: 400 !important;
+  }
+  .nerve-dot::after { display: none !important; }
+  .nerve-expansion {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .nerve-divider {
+    height: 1px; background: var(--border);
+    margin-bottom: 2px;
+  }
+
+  .proj-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  input[type="text"] {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 7px 10px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-bright); outline: none; transition: border-color 0.15s;
+    -webkit-user-select: text; user-select: text;
+  }
+  input[type="text"]:focus { border-color: var(--green-dim); background: var(--surface2); }
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  .input-with-btn { display: flex; gap: 6px; }
+  .input-with-btn input { flex: 1; }
+  .btn-browse {
+    padding: 0 10px; height: 32px;
+    font-family: var(--mono); font-size: 11px;
+    border: 1px solid var(--border-bright); border-radius: 4px;
+    background: var(--surface); color: var(--muted);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-browse:hover { border-color: var(--muted); color: var(--text-bright); background: var(--surface2); }
+
+  .preview-path {
+    font-size: 10px; color: var(--muted);
+    padding: 5px 8px; background: var(--surface);
+    border-radius: 3px; border-left: 2px solid var(--green-dim);
+    margin-bottom: 12px;
+  }
+  .preview-path span { color: var(--green); }
+
+  .editor-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    position: relative; min-height: 0;
+  }
+
+  .editor-label {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 5px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .tag {
+    font-size: 9px; padding: 1px 5px; border-radius: 3px;
+    border: 1px solid var(--green-dim); color: var(--green);
+    text-transform: none; letter-spacing: 0;
+  }
+
+  textarea {
+    flex: 1; width: 100%;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 12px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-bright); line-height: 1.8;
+    resize: none; outline: none; transition: border-color 0.15s;
+    -webkit-user-select: text; user-select: text;
+    tab-size: 2;
+  }
+  textarea:focus { border-color: var(--green-dim); background: var(--surface2); }
+  textarea::placeholder { color: var(--muted); line-height: 2; }
+
+  .hint {
+    font-size: 10px; color: var(--muted);
+    margin-top: 6px; line-height: 1.6;
+    display: flex; gap: 16px;
+  }
+  .hint span { display: flex; align-items: center; gap: 4px; }
+  .hint code { color: var(--green); font-size: 10px; }
+
+  .footer {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 10px 20px; margin-top: 10px;
+    display: flex; gap: 8px; align-items: center; flex-shrink: 0;
+  }
+  .btn {
+    font-family: var(--mono); font-size: 11px; padding: 7px 14px;
+    border-radius: 4px; border: 1px solid var(--border-bright);
+    background: var(--surface2); color: var(--text);
+    cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+  }
+  .btn:hover { background: var(--border); border-color: var(--muted); }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary {
+    border-color: var(--green-dim); color: var(--green);
+    background: var(--green-glow);
+  }
+  .btn.primary:hover { background: rgba(152,195,121,0.2); border-color: var(--green); }
+  .status { font-size: 11px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="title-dot"></div>
+  <span class="titlebar-text">NERVE // DISPATCH</span>
+  <button class="titlebar-btn" onclick="ipcRenderer.send('minimize-window')" title="Minimize">─</button>
+  <button class="titlebar-btn close" onclick="ipcRenderer.send('close-window')" title="Hide to tray">✕</button>
+</div>
+
+<div class="body">
+  <div class="header">
+    <div class="nerve-logo">
+      <div class="nerve-letters">
+        <span>N</span><span class="nerve-dot">·</span>
+        <span>E</span><span class="nerve-dot">·</span>
+        <span>R</span><span class="nerve-dot">·</span>
+        <span>V</span><span class="nerve-dot">·</span>
+        <span>E</span>
+      </div>
+      <div class="nerve-expansion">Neural Execution Relay Via Epyon</div>
+      <div class="nerve-divider"></div>
+    </div>
+    <div class="prompt-line" style="margin-top:8px">
+      <span class="ps1">crux@epyon:~$</span>
+      <span class="cmd">dispatch</span>
+      <span class="cursor"></span>
+    </div>
+  </div>
+
+  <div class="proj-row">
+    <div class="field" style="flex:1">
+      <div class="field-label">Project</div>
+      <input type="text" id="projInput" placeholder="weather-app" />
+    </div>
+    <div class="field" style="flex:2">
+      <div class="field-label">Sync folder</div>
+      <div class="input-with-btn">
+        <input type="text" id="pathInput" value="C:\Users\Ricka\sync" />
+        <button class="btn-browse" onclick="browseSyncFolder()">browse</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="field-label" style="margin-bottom:5px">Load existing</div>
+    <div class="input-with-btn">
+      <select id="projectSelect" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-family:var(--mono);font-size:12px;color:var(--text-bright);outline:none">
+        <option value="">— select project to edit —</option>
+      </select>
+      <button class="btn-browse" onclick="loadProject()">load</button>
+      <button class="btn-browse" onclick="refreshProjects()">↻</button>
+    </div>
+  </div>
+
+  <div class="preview-path" id="preview">
+    → <span>C:\Users\Ricka\sync\&lt;project&gt;\</span>plan.md + tasks.md
+  </div>
+
+  <div class="editor-wrap">
+    <div class="editor-label">
+      Dispatch <span class="tag">## Plan → plan.md</span><span class="tag">## Tasks → tasks.md</span>
+    </div>
+    <textarea id="editor" placeholder="## Plan&#10;Describe what you want Epyon to build...&#10;&#10;## Tasks&#10;- Build initial version based on plan.md&#10;- Add error handling&#10;- Write tests"></textarea>
+    <div class="hint">
+      <span>Use <code>## Plan</code> and <code>## Tasks</code> sections</span>
+      <span>Tasks: one <code>- item</code> per line</span>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="btn primary" onclick="dispatch()">◉ dispatch to epyon</button>
+  <button class="btn" onclick="openAIChat()">✦ draft with AI</button>
+  <button class="btn" onclick="clearAll()">clear</button>
+  <span class="status" id="status"></span>
+</div>
+
+<script>
+const { ipcRenderer } = require('electron')
+
+const projInput = document.getElementById('projInput')
+const pathInput = document.getElementById('pathInput')
+const editor    = document.getElementById('editor')
+const statusEl  = document.getElementById('status')
+const preview   = document.getElementById('preview')
+
+function updatePreview() {
+  const proj = projInput.value.trim() || '<project>'
+  const base = pathInput.value.trim() || 'C:\\Users\\Ricka\\sync'
+  preview.innerHTML = '→ <span>' + base + '\\' + proj + '\\</span>plan.md + tasks.md'
+}
+projInput.addEventListener('input', updatePreview)
+pathInput.addEventListener('input', () => { updatePreview(); refreshProjects() })
+
+// Load projects on startup
+window.addEventListener('DOMContentLoaded', refreshProjects)
+
+function parseContent(text) {
+  const planMatch  = text.match(/^##\s*Plan\s*\n([\s\S]*?)(?=^##\s*Tasks|\s*$)/mi)
+  const tasksMatch = text.match(/^##\s*Tasks\s*\n([\s\S]*)/mi)
+
+  const plan  = planMatch  ? planMatch[1].trim()  : ''
+  const tasksRaw = tasksMatch ? tasksMatch[1].trim() : ''
+
+  const tasks = tasksRaw
+    .split('\n')
+    .map(l => l.replace(/^[-*]\s*/, '').trim())
+    .filter(l => l.length > 0)
+
+  return { plan, tasks }
+}
+
+function setStatus(msg, type, duration) {
+  statusEl.textContent = msg
+  statusEl.className = 'status ' + (type || '')
+  if (duration !== 0) setTimeout(() => { statusEl.textContent = ''; statusEl.className = 'status' }, duration || 4000)
+}
+
+async function browseSyncFolder() {
+  const result = await ipcRenderer.invoke('browse-folder')
+  if (result) { pathInput.value = result; updatePreview() }
+}
+
+async function dispatch() {
+  const proj = projInput.value.trim()
+  const text = editor.value.trim()
+
+  if (!proj) { setStatus('✗ enter a project name', 'err'); projInput.focus(); return }
+  if (!text) { setStatus('✗ write something first', 'err'); editor.focus(); return }
+
+  const { plan, tasks } = parseContent(text)
+
+  if (!plan)         { setStatus('✗ need a ## Plan section', 'err'); return }
+  if (!tasks.length) { setStatus('✗ need a ## Tasks section with at least one - item', 'err'); return }
+
+  const result = await ipcRenderer.invoke('save-project', {
+    projectName: proj,
+    syncPath: pathInput.value.trim(),
+    plan,
+    tasks
+  })
+
+  if (result.success) {
+    setStatus('✓ dispatched → ' + result.path, 'ok', 5000)
+    setTimeout(() => ipcRenderer.send('close-window'), 1500)
+  } else {
+    setStatus('✗ ' + result.error, 'err', 0)
+  }
+}
+
+async function refreshProjects() {
+  const base = pathInput.value.trim()
+  const projects = await ipcRenderer.invoke('list-projects', base)
+  const sel = document.getElementById('projectSelect')
+  sel.innerHTML = '<option value="">— select project to edit —</option>'
+  projects.forEach(p => {
+    const opt = document.createElement('option')
+    opt.value = p; opt.textContent = p
+    sel.appendChild(opt)
+  })
+}
+
+async function loadProject() {
+  const sel = document.getElementById('projectSelect')
+  const proj = sel.value
+  if (!proj) { setStatus('✗ select a project first', 'err'); return }
+  const result = await ipcRenderer.invoke('load-project', {
+    syncPath: pathInput.value.trim(),
+    projectName: proj
+  })
+  if (!result.success) { setStatus('✗ ' + result.error, 'err'); return }
+
+  projInput.value = proj
+  updatePreview()
+
+  // Parse tasks.md lines and combine with plan into editor format
+  const taskLines = result.tasks.split('\n')
+    .filter(l => l.trim())
+    .map(l => l.replace(/^- \[.\] /, '- ').replace(/^- \[ \] /, '- '))
+    .join('\n')
+
+  editor.value = '## Plan\n' + result.plan.trim() + '\n\n## Tasks\n' + taskLines
+  setStatus('✓ loaded ' + proj, 'ok')
+  editor.focus()
+}
+
+function clearAll() {
+  editor.value = ''
+  projInput.value = ''
+  updatePreview()
+  statusEl.textContent = ''
+  projInput.focus()
+}
+
+async function openAIChat() {
+  const proj     = projInput.value.trim()
+  const syncPath = pathInput.value.trim()
+  await ipcRenderer.invoke('open-chat', { projectName: proj, syncPath })
+}
+
+// Receive draft from AI chat window — populate editor
+ipcRenderer.on('nerve-draft-ready', (event, { plan, tasks }) => {
+  editor.value = '## Plan\n' + plan + '\n\n## Tasks\n' + tasks
+  setStatus('✓ AI draft loaded — review and dispatch', 'ok', 6000)
+  editor.focus()
+})
+</script>
+</body>
+</html>
