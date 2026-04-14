@@ -1,5 +1,5 @@
-- [x] Read ~/projects/nerve/main.js and ~/projects/nerve/index.html to understand how tasks are parsed from the textarea and written to tasks.md
-- [x] Identify why only the first task gets a - [ ] prefix
-- [x] Fix the parsing logic so all task lines get - [ ] prefixes
-- [x] Verify fix handles edge cases — empty lines, lines starting with -, lines already starting with - [ ]
-- [x] Update ~/sync/nerve/plan.md to note the fix
+- [x] Read nerve-context.js and trace all file paths it constructs on Windows
+- [ ] Verify os.homedir() + path.join resolves correctly for C:\Users\Ricka\projects\ on Windows
+- [ ] Fix any path issues — ensure CLAUDE.md, plan.md, tasks.md, results.md and source files are found
+- [ ] Add a context summary to the chat window on load: list each source it found or skipped
+- [ ] Test by checking the context summary shows real files when zero-system project is selected in NERVE
