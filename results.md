@@ -647,3 +647,12 @@ The content for `### 2. No Tool Invention` is already present in `nerve-ai.md` a
 
 ---
 
+## You may only reference existing files and scripts. Do not propose new automation scripts, daemons, services, agent systems, or execution layers unless they already exist in context.
+
+**Completed:** 2026-04-15 20:24:44
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Understood. The grounding rule is noted: I will only reference files and scripts that are explicitly present in the provided context. I will not propose new automation scripts, daemons, services, agent systems, or execution layers.
+
+---
+
