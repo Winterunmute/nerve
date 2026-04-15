@@ -402,12 +402,11 @@ async function dispatch() {
   if (!tasks.length) { setStatus('✗ need a ## Tasks section with at least one - item', 'err'); return }
 
   const scheduledAt = scheduleCheck.checked ? scheduleTime.value : null
-  const finalPlan = scheduledAt ? `run at ${scheduledAt}\n${plan}` : plan
 
   const result = await ipcRenderer.invoke('save-project', {
     projectName: proj,
     syncPath: pathInput.value.trim(),
-    plan: finalPlan,
+    plan,
     tasks,
     scheduledAt
   })

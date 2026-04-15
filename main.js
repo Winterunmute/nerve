@@ -131,7 +131,7 @@ ipcMain.on('nerve-draft-ready', (event, { plan, tasks }) => {
 })
 
 // IPC: save files to sync folder
-ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, tasks }) => {
+ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, tasks, scheduledAt }) => {
   try {
     const projectDir = path.join(syncPath, projectName)
 
@@ -143,6 +143,22 @@ ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, task
 
     const tasksContent = tasks.map(t => `- [ ] ${t}`).join('\n') + '\n'
     fs.writeFileSync(path.join(projectDir, 'tasks.md'), tasksContent, 'utf8')
+
+    // Write or clear SCHEDULED_AT in .zero-config
+    const configPath = path.join(projectDir, '.zero-config')
+    let configLines = fs.existsSync(configPath)
+      ? fs.readFileSync(configPath, 'utf8').split('\n').filter(l => !l.startsWith('SCHEDULED_AT=') && l !== '')
+      : []
+    if (scheduledAt) configLines.push(`SCHEDULED_AT=${scheduledAt}`)
+    fs.writeFileSync(configPath, configLines.join('\n') + (configLines.length ? '\n' : ''), 'utf8')
+
+    // Write or remove scheduling.md
+    const schedulingPath = path.join(projectDir, 'scheduling.md')
+    if (scheduledAt) {
+      fs.writeFileSync(schedulingPath, `run at ${scheduledAt}\n`, 'utf8')
+    } else if (fs.existsSync(schedulingPath)) {
+      fs.unlinkSync(schedulingPath)
+    }
 
     return { success: true, path: projectDir }
   } catch (err) {

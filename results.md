@@ -561,3 +561,14 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## Read ~/projects/nerve/nerve-ai.md to understand current content
+
+**Completed:** 2026-04-15 20:21:36
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The file is a context document for the NERVE AI planning assistant — it defines the AI's role, the Eva-01/Epyon system architecture, what Epyon can and can't do, behavioral guidelines, and an example dispatch format.
+
+What's the task you'd like done with this content?
+
+---
+
