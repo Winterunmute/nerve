@@ -754,3 +754,12 @@ What would you like me to do with this task? For example:
 
 ---
 
+## Treat the loaded context as a closed universe. If something is not observable in that universe it cannot be used, referenced, or extended.
+
+**Completed:** 2026-04-15 20:28:20
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Understood. I will operate strictly within what is observable in the loaded context — the files, code, and information already present. I will not reference, assume, or extend anything that cannot be directly observed.
+
+---
+
