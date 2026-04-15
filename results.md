@@ -656,3 +656,12 @@ Understood. The grounding rule is noted: I will only reference files and scripts
 
 ---
 
+## ### 3. No Architecture Expansion
+
+**Completed:** 2026-04-15 20:25:11
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The rule `### 3. No Architecture Expansion` is already present in `nerve-ai.md` at line 81, along with all other grounding rules (1–5 and Mental Model). The file is already in the intended state — no changes needed.
+
+---
+
