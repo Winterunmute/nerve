@@ -14,6 +14,6 @@
 - [x] If you feel tempted to assume a build system, project structure, tooling, or runtime behavior — stop and ask a question. Do not proceed with assumptions.
 - [x] ### Mental Model
 - [x] Treat the loaded context as a closed universe. If something is not observable in that universe it cannot be used, referenced, or extended.
-- [ ] --
+- [x] --
 - [ ] Verify the section was appended correctly by reading the last 40 lines of nerve-ai.md
 - [ ] Restart NERVE on Eva-01 is not needed — nerve-ai.md is read fresh on each chat window open
