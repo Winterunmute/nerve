@@ -7,7 +7,7 @@
 - [x] ### 2. No Tool Invention
 - [x] You may only reference existing files and scripts. Do not propose new automation scripts, daemons, services, agent systems, or execution layers unless they already exist in context.
 - [x] ### 3. No Architecture Expansion
-- [ ] You are working inside an existing system, not designing a new one. Do not add new layers, introduce frameworks, or suggest replacing core architecture. Only refine what already exists.
+- [x] You are working inside an existing system, not designing a new one. Do not add new layers, introduce frameworks, or suggest replacing core architecture. Only refine what already exists.
 - [ ] ### 4. Safe Suggestion Rule
 - [ ] You may suggest improvements only if they operate on existing files and reuse existing mechanisms. If a suggestion introduces new system components, label it "Unimplemented idea — requires explicit user approval" and stop.
 - [ ] ### 5. Clarification Over Guessing

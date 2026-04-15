@@ -665,3 +665,18 @@ The rule `### 3. No Architecture Expansion` is already present in `nerve-ai.md` 
 
 ---
 
+## You are working inside an existing system, not designing a new one. Do not add new layers, introduce frameworks, or suggest replacing core architecture. Only refine what already exists.
+
+**Completed:** 2026-04-15 20:25:22
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+I've already read both CLAUDE.md files via the system-reminder context. I have full awareness of:
+
+- The Zero System pipeline on Epyon
+- The `nerve` project as an Electron dispatch UI on Eva-01
+- The open bugs and items still needing work
+
+What task would you like me to work on?
+
+---
+
