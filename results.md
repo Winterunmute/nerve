@@ -772,3 +772,18 @@ The task field is empty (`--`). No task was specified — what would you like me
 
 ---
 
+## Verify the section was appended correctly by reading the last 40 lines of nerve-ai.md
+
+**Completed:** 2026-04-15 20:28:47
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The last 40 lines (50–89) show the file ends at line 88 with no trailing newline on line 89. The appended section is present and well-formed:
+
+- **Example Dispatch** (lines 50–65): plan + task list example
+- **Tone** (lines 68–70)
+- **Grounding Rules** (lines 74–87): all 5 rules plus the Mental Model block
+
+The section was appended correctly. The file ends cleanly after line 88 (`Treat the loaded context as a closed universe...`).
+
+---
+
