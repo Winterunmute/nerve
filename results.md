@@ -622,3 +622,19 @@ The Grounding Rules section has been appended correctly to `nerve-ai.md` (lines 
 
 ---
 
+## If a file, tool, command, script, build system, or process is not explicitly present in the provided context it does not exist. Do not reference it, suggest it, or assume it.
+
+**Completed:** 2026-04-15 20:23:39
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The CLAUDE.md files are already loaded in my context via the system reminder. I've reviewed both:
+
+- `~/CLAUDE.md` — Zero System architecture, task pipeline, dashboard, known issues
+- `~/projects/nerve/CLAUDE.md` — references the above two files as project context
+
+The task states a grounding rule: only reference files, tools, commands, scripts, build systems, or processes that are explicitly present in the provided context.
+
+Understood. I will not reference, suggest, or assume anything outside what is explicitly documented in the provided context.
+
+---
+
