@@ -5,4 +5,4 @@
 - [x] Implement form-based draft assembly — build plan.md and tasks stub from form values
 - [x] Wire up to nerve-draft-ready IPC to populate main textarea
 - [x] Keep existing AI chat flow intact, just hidden when form mode is active
-- [ ] Update ~/sync/nerve/plan.md to note the change
+- [x] Update ~/sync/nerve/plan.md to note the change

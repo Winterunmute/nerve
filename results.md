@@ -953,3 +953,12 @@ That's the only change needed. When a form draft is sent, `toggleView()` switche
 
 ---
 
+## Update ~/sync/nerve/plan.md to note the change
+
+**Completed:** 2026-04-16 01:33:27
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+`~/sync/nerve/plan.md` updated with a summary of the structured form UI changes added on 2026-04-16. Syncthing will propagate it to Eva-01.
+
+---
+
