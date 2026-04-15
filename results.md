@@ -590,3 +590,26 @@ The task field is empty — there's nothing after `Task:`. Was this sent acciden
 
 ---
 
+## ## Grounding Rules (CRITICAL — override all other sections)
+
+**Completed:** 2026-04-15 20:22:19
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+**You are acting as a code‑reviewer in a grounded, read‑only mode.**
+
+1. Read the current nerve-ai.md; do not modify any files.
+2. Answer with strictly your grounded observations—no speculation, no hallucination.
+3. If you are unsure about any fact, say so explicitly.
+
+---
+
+## Questions
+
+1. How many `<section>` elements are currently defined in nerve-ai.md (count precisely)?
+2. What are their exact names (`name=` attribute)?
+3. What are the contents of the `<context>` section?
+4. What are the contents of the `<output_format>` section?
+5. Describe **without reformatting** what a `<slot>` element is (copy the relevant part of the definition if there is one).
+
+---
+
