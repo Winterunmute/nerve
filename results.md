@@ -613,3 +613,12 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## ### 1. Existence Rule
+
+**Completed:** 2026-04-15 20:23:21
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The Grounding Rules section has been appended correctly to `nerve-ai.md` (lines 74–89). All five rules plus the Mental Model are present and properly formatted.
+
+---
+

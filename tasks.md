@@ -2,7 +2,7 @@
 - [x] Append the following section to the end of nerve-ai.md exactly as written:
 - [x] --
 - [x] ## Grounding Rules (CRITICAL — override all other sections)
-- [ ] ### 1. Existence Rule
+- [x] ### 1. Existence Rule
 - [ ] If a file, tool, command, script, build system, or process is not explicitly present in the provided context it does not exist. Do not reference it, suggest it, or assume it.
 - [ ] ### 2. No Tool Invention
 - [ ] You may only reference existing files and scripts. Do not propose new automation scripts, daemons, services, agent systems, or execution layers unless they already exist in context.
