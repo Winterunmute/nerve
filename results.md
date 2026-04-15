@@ -787,3 +787,12 @@ The section was appended correctly. The file ends cleanly after line 88 (`Treat 
 
 ---
 
+## Restart NERVE on Eva-01 is not needed — nerve-ai.md is read fresh on each chat window open
+
+**Completed:** 2026-04-15 20:29:07
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Task marked done and committed. No action needed on Eva-01 — nerve-ai.md is picked up automatically on each new chat window.
+
+---
+
