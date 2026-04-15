@@ -16,4 +16,4 @@
 - [x] Treat the loaded context as a closed universe. If something is not observable in that universe it cannot be used, referenced, or extended.
 - [x] --
 - [x] Verify the section was appended correctly by reading the last 40 lines of nerve-ai.md
-- [ ] Restart NERVE on Eva-01 is not needed — nerve-ai.md is read fresh on each chat window open
+- [x] Restart NERVE on Eva-01 is not needed — nerve-ai.md is read fresh on each chat window open
