@@ -796,3 +796,30 @@ Task marked done and committed. No action needed on Eva-01 — nerve-ai.md is pi
 
 ---
 
+## Read ~/projects/nerve/chat.html to understand current structure
+
+**Completed:** 2026-04-15 22:14:29
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Here's the structure of `chat.html`:
+
+**Layout (3 panels, flex column):**
+1. **Titlebar** — drag region, blue dot, "NERVE // AI DRAFT" + project label, model selector dropdown, minimize/close buttons
+2. **Loading bar** — 2px animated gradient, hidden after context loads
+3. **Messages area** — scrollable, flex-column, typed messages (user/assistant/system/found/skipped/error/success)
+4. **Footer** — text input row (`> [input] [send]`) + action row (`[◉ generate draft] [clear]`)
+
+**JavaScript logic:**
+- `loadModels()` — fetches Ollama model list from `localhost:11434/api/tags`, populates select, persists choice to `localStorage`
+- `loadContext()` — IPC `get-context` call → sets `systemPrompt`, shows context summary lines, enables UI
+- `streamOllama()` — streams from `localhost:11434/api/chat`, updates stream div incrementally
+- `handleSend()` — appends user message to history, calls `streamOllama()`
+- `handleGenerate()` — sends `GENERATE_PROMPT`, parses `## Plan` / `## Tasks` from response, sends `nerve-draft-ready` IPC event
+- `clearChat()` — clears DOM + `conversationHistory`, keeps system prompt
+
+**Key constants:**
+- `OLLAMA_MODEL = 'qwen2.5-coder:7b'` (unused — model comes from the selector)
+- `GENERATE_PROMPT` — instructs model to output only markdown with `## Plan` and `## Tasks` sections
+
+---
+

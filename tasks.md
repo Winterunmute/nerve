@@ -1,19 +1,8 @@
-- [x] Read ~/projects/nerve/nerve-ai.md to understand current content
-- [x] Append the following section to the end of nerve-ai.md exactly as written:
-- [x] --
-- [x] ## Grounding Rules (CRITICAL — override all other sections)
-- [x] ### 1. Existence Rule
-- [x] If a file, tool, command, script, build system, or process is not explicitly present in the provided context it does not exist. Do not reference it, suggest it, or assume it.
-- [x] ### 2. No Tool Invention
-- [x] You may only reference existing files and scripts. Do not propose new automation scripts, daemons, services, agent systems, or execution layers unless they already exist in context.
-- [x] ### 3. No Architecture Expansion
-- [x] You are working inside an existing system, not designing a new one. Do not add new layers, introduce frameworks, or suggest replacing core architecture. Only refine what already exists.
-- [x] ### 4. Safe Suggestion Rule
-- [x] You may suggest improvements only if they operate on existing files and reuse existing mechanisms. If a suggestion introduces new system components, label it "Unimplemented idea — requires explicit user approval" and stop.
-- [x] ### 5. Clarification Over Guessing
-- [x] If you feel tempted to assume a build system, project structure, tooling, or runtime behavior — stop and ask a question. Do not proceed with assumptions.
-- [x] ### Mental Model
-- [x] Treat the loaded context as a closed universe. If something is not observable in that universe it cannot be used, referenced, or extended.
-- [x] --
-- [x] Verify the section was appended correctly by reading the last 40 lines of nerve-ai.md
-- [x] Restart NERVE on Eva-01 is not needed — nerve-ai.md is read fresh on each chat window open
+- [x] Read ~/projects/nerve/chat.html to understand current structure
+- [ ] Add form/chat toggle button to the chat window header
+- [ ] Build the structured form UI — textarea, file multi-select, constraints input, task count radio
+- [ ] Populate the file multi-select from the loaded project file tree context
+- [ ] Implement form-based draft assembly — build plan.md and tasks stub from form values
+- [ ] Wire up to nerve-draft-ready IPC to populate main textarea
+- [ ] Keep existing AI chat flow intact, just hidden when form mode is active
+- [ ] Update ~/sync/nerve/plan.md to note the change
