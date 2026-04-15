@@ -237,49 +237,101 @@
     display: none;
     flex: 1;
     flex-direction: column;
-    padding: 14px 18px 8px;
-    gap: 8px;
+    padding: 10px 14px 6px;
+    gap: 6px;
     min-height: 0;
+    overflow-y: auto;
   }
   .form-view.visible { display: flex; }
+  .form-view::-webkit-scrollbar { width: 4px; }
+  .form-view::-webkit-scrollbar-track { background: transparent; }
+  .form-view::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
 
   .form-label {
     font-size: 10px; color: var(--muted);
     letter-spacing: 0.1em; text-transform: uppercase;
-    display: flex; gap: 8px; align-items: center;
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 4px;
+    flex-shrink: 0;
   }
-  .form-tag {
-    font-size: 9px; padding: 1px 5px; border-radius: 3px;
-    border: 1px solid var(--green-dim); color: var(--green);
-    text-transform: none; letter-spacing: 0;
-  }
+  .form-label:first-child { margin-top: 0; }
+  .form-opt { font-size: 9px; color: var(--border-bright); text-transform: none; letter-spacing: 0; }
 
-  #formEditor {
-    flex: 1;
+  .form-textarea {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     font-family: var(--mono);
     font-size: 12px;
     color: var(--text-bright);
-    line-height: 1.8;
+    line-height: 1.75;
     resize: none;
     outline: none;
     transition: border-color 0.15s;
     -webkit-user-select: text;
     user-select: text;
-    tab-size: 2;
-    min-height: 0;
+    flex-shrink: 0;
   }
-  #formEditor:focus { border-color: var(--blue-dim); }
-  #formEditor::placeholder { color: var(--muted); line-height: 2; }
+  .form-textarea:focus { border-color: var(--blue-dim); }
+  .form-textarea::placeholder { color: var(--muted); }
 
-  .form-hint {
-    font-size: 10px; color: var(--muted);
-    display: flex; gap: 14px;
+  .form-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-bright);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-user-select: text;
+    user-select: text;
+    flex-shrink: 0;
+    width: 100%;
   }
-  .form-hint code { color: var(--green); font-size: 10px; }
+  .form-input:focus { border-color: var(--blue-dim); }
+  .form-input::placeholder { color: var(--muted); }
+
+  .file-add-row { display: flex; gap: 5px; flex-shrink: 0; }
+  .file-add-row .form-input { flex: 1; width: auto; }
+  .btn-sm {
+    font-family: var(--mono); font-size: 11px;
+    padding: 5px 10px; border-radius: 3px;
+    border: 1px solid var(--border-bright);
+    background: var(--surface2); color: var(--muted);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-sm:hover { background: var(--border); color: var(--text-bright); border-color: var(--muted); }
+
+  .chip-list { display: flex; flex-wrap: wrap; gap: 4px; flex-shrink: 0; }
+  .chip {
+    display: flex; align-items: center; gap: 3px;
+    background: var(--surface2); border: 1px solid var(--border-bright);
+    border-radius: 3px; padding: 2px 6px;
+    font-size: 10px; color: var(--blue); max-width: 240px;
+  }
+  .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip-remove {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 12px; line-height: 1;
+    padding: 0 1px; flex-shrink: 0;
+  }
+  .chip-remove:hover { color: var(--red); }
+
+  .radio-group { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
+  .radio-opt {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--muted);
+    cursor: pointer; padding: 4px 12px;
+    border: 1px solid var(--border); border-radius: 3px;
+    background: var(--surface2); transition: all 0.15s;
+    -webkit-user-select: none; user-select: none; min-width: 38px;
+  }
+  .radio-opt:hover { border-color: var(--border-bright); color: var(--text); }
+  .radio-opt.active { border-color: var(--green-dim); color: var(--green); background: var(--green-glow); }
+  .radio-opt input[type="radio"] { display: none; }
 </style>
 </head>
 <body>
