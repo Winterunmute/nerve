@@ -1,5 +1,5 @@
 - [x] Read ~/projects/nerve/nerve-ai.md to understand current content
-- [ ] Append the following section to the end of nerve-ai.md exactly as written:
+- [x] Append the following section to the end of nerve-ai.md exactly as written:
 - [ ] --
 - [ ] ## Grounding Rules (CRITICAL — override all other sections)
 - [ ] ### 1. Existence Rule
