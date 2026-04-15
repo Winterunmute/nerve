@@ -740,3 +740,17 @@ What would you like me to do?
 
 ---
 
+## ### Mental Model
+
+**Completed:** 2026-04-15 20:28:11
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The task header is "Mental Model" with no further description. This is incomplete — there's no body explaining what to actually do.
+
+What would you like me to do with this task? For example:
+- Write a mental model document for the nerve project?
+- Write one for the zero-system?
+- Something else entirely?
+
+---
+
