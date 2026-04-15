@@ -638,3 +638,12 @@ Understood. I will not reference, suggest, or assume anything outside what is ex
 
 ---
 
+## ### 2. No Tool Invention
+
+**Completed:** 2026-04-15 20:24:22
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The content for `### 2. No Tool Invention` is already present in `nerve-ai.md` at line 78-79. This was appended as part of the full Grounding Rules block in a prior run. No further action is needed — the section exists and is correct.
+
+---
+
