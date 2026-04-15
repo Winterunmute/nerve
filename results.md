@@ -680,3 +680,21 @@ What task would you like me to work on?
 
 ---
 
+## ### 4. Safe Suggestion Rule
+
+**Completed:** 2026-04-15 20:26:32
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The task "### 4. Safe Suggestion Rule" is part of a sequential append operation to `nerve-ai.md`. Rule 4 is already present in the file (lines 82-83) from a prior batch that added the full Grounding Rules section. Looking at the tasks.md, rules 1-3 have been checked off one by one, and now the pipeline is processing rule 4.
+
+The content is already correct in `nerve-ai.md`:
+
+```
+### 4. Safe Suggestion Rule
+You may suggest improvements only if they operate on existing files and reuse existing mechanisms. If a suggestion introduces new system components, label it "Unimplemented idea — requires explicit user approval" and stop.
+```
+
+No changes needed — the rule is already in place. The pipeline can mark this task done.
+
+---
+
