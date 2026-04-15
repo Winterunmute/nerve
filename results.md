@@ -939,3 +939,17 @@ No code changes needed — this task is already complete.
 
 ---
 
+## Keep existing AI chat flow intact, just hidden when form mode is active
+
+**Completed:** 2026-04-16 01:32:55
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+That's the only change needed. When a form draft is sent, `toggleView()` switches back to chat, then `addMsg(...)` posts the confirmation into the messages list — the same success message `handleGenerate()` already uses. The rest of the chat flow was already intact:
+
+- `conversationHistory` is never touched by form mode or the toggle
+- `messagesEl` is hidden with `display: none`, not cleared
+- `chatInput` value and enabled state are preserved across the toggle
+- Switching back from form restores focus to `chatInput`
+
+---
+

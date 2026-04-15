@@ -730,6 +730,7 @@ function handleSendDraft() {
 
   ipcRenderer.send('nerve-draft-ready', { plan, tasks })
   toggleView() // switch back to chat view
+  addMsg('success', '✓', 'Draft sent to NERVE. Switch to the main window to review and dispatch.')
 }
 
 function clearForm() {
