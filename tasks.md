@@ -2,7 +2,7 @@
 - [x] Add form/chat toggle button to the chat window header
 - [x] Build the structured form UI — textarea, file multi-select, constraints input, task count radio
 - [x] Populate the file multi-select from the loaded project file tree context
-- [ ] Implement form-based draft assembly — build plan.md and tasks stub from form values
+- [x] Implement form-based draft assembly — build plan.md and tasks stub from form values
 - [ ] Wire up to nerve-draft-ready IPC to populate main textarea
 - [ ] Keep existing AI chat flow intact, just hidden when form mode is active
 - [ ] Update ~/sync/nerve/plan.md to note the change

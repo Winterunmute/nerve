@@ -877,3 +877,24 @@ The file input uses a native `<datalist>` which gives browser-native autocomplet
 
 ---
 
+## Implement form-based draft assembly — build plan.md and tasks stub from form values
+
+**Completed:** 2026-04-16 01:29:40
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Everything looks correct. Here's what was implemented:
+
+**Form structure** — replaced the single raw textarea with three dedicated fields:
+- `goalInput` textarea — the plan description, becomes `plan.md`
+- `constraintsInput` text field — optional, appended as `## Constraints` section
+- `tasksInput` textarea — the task list, becomes `tasks.md`
+- File multi-select (unchanged)
+
+**Task count radio** (`chat.html:489-505`) — clicking 1/3/5 pre-populates `tasksInput` with that many `- ` stub lines, but only when the textarea is empty or contains only empty stubs. "Custom" leaves the textarea untouched for free-form entry.
+
+**`handleSendDraft`** (`chat.html:707-733`) — assembles `plan` from goal + optional constraints + optional context files; validates that `goal` is filled and that tasks aren't just empty stubs before sending `nerve-draft-ready`.
+
+**`clearForm`** (`chat.html:735-746`) — resets all three fields, clears file chips, and resets the radio back to `1`.
+
+---
+

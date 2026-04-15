@@ -349,8 +349,24 @@
 <div class="messages" id="messages"></div>
 
 <div class="form-view" id="formView">
-  <div class="form-label">task <span class="form-opt">direct dispatch — ## Plan → plan.md  ## Tasks → tasks.md</span></div>
-  <textarea id="formEditor" placeholder="## Plan&#10;Describe what you want to build...&#10;&#10;## Tasks&#10;- First task&#10;- Second task"></textarea>
+  <div class="form-label">goal <span class="form-opt">what to build — becomes plan.md</span></div>
+  <textarea id="goalInput" class="form-textarea" rows="4"
+    placeholder="Describe what you want to build..."></textarea>
+
+  <div class="form-label">constraints <span class="form-opt">optional — scope, rules, limitations</span></div>
+  <input type="text" id="constraintsInput" class="form-input"
+    placeholder="e.g. no external deps, must work offline...">
+
+  <div class="form-label">tasks <span class="form-opt">one per line — becomes tasks.md</span></div>
+  <div class="radio-group" id="taskCountGroup">
+    <label class="radio-opt active" data-val="1"><input type="radio" name="taskCount" value="1" checked> 1</label>
+    <label class="radio-opt" data-val="3"><input type="radio" name="taskCount" value="3"> 3</label>
+    <label class="radio-opt" data-val="5"><input type="radio" name="taskCount" value="5"> 5</label>
+    <label class="radio-opt" data-val="custom"><input type="radio" name="taskCount" value="custom"> custom</label>
+  </div>
+  <textarea id="tasksInput" class="form-textarea" rows="3"
+    placeholder="- First task&#10;- Second task"></textarea>
+
   <div class="form-label">files <span class="form-opt">optional — reference files for context</span></div>
   <div class="file-add-row">
     <input type="text" id="fileInput" class="form-input" list="fileDatalist"
@@ -402,7 +418,9 @@ let systemPrompt = ''
 
 const messagesEl   = document.getElementById('messages')
 const formView     = document.getElementById('formView')
-const formEditor   = document.getElementById('formEditor')
+const goalInput    = document.getElementById('goalInput')
+const constraintsInput = document.getElementById('constraintsInput')
+const tasksInput   = document.getElementById('tasksInput')
 const chatInput    = document.getElementById('chatInput')
 const sendBtn      = document.getElementById('sendBtn')
 const generateBtn  = document.getElementById('generateBtn')
@@ -464,6 +482,28 @@ function renderFileChips() {
   }
 }
 
+// ── task count radio ──────────────────────────────────────────────────────────
+
+const TASK_STUB = '- '
+
+document.getElementById('taskCountGroup').addEventListener('click', e => {
+  const label = e.target.closest('.radio-opt')
+  if (!label) return
+  document.querySelectorAll('#taskCountGroup .radio-opt').forEach(l => l.classList.remove('active'))
+  label.classList.add('active')
+  const radio = label.querySelector('input[type="radio"]')
+  if (radio) radio.checked = true
+  const val = label.dataset.val
+  if (val === 'custom') return
+  const n = parseInt(val, 10)
+  // Only populate if textarea is empty or was auto-populated (all lines are stubs)
+  const lines = tasksInput.value.split('\n').filter(l => l.trim())
+  const allStubs = lines.every(l => l === TASK_STUB)
+  if (!tasksInput.value.trim() || allStubs) {
+    tasksInput.value = Array.from({ length: n }, () => TASK_STUB).join('\n')
+  }
+})
+
 // ── view toggle ───────────────────────────────────────────────────────────────
 
 function toggleView() {
@@ -481,7 +521,7 @@ function toggleView() {
   toggleViewBtn.title = isFormView ? 'Switch to chat' : 'Switch to form'
 
   if (isFormView) {
-    formEditor.focus()
+    goalInput.focus()
   } else {
     if (!chatInput.disabled) chatInput.focus()
   }
@@ -665,22 +705,25 @@ function clearChat() {
 // ── form view handlers ────────────────────────────────────────────────────────
 
 function handleSendDraft() {
-  const text = formEditor.value.trim()
-  if (!text) return
+  const goal        = goalInput.value.trim()
+  const constraints = constraintsInput.value.trim()
+  const tasks       = tasksInput.value.trim()
 
-  const planMatch  = text.match(/^##\s*Plan\s*\n([\s\S]*?)(?=^##\s*Tasks)/mi)
-  const tasksMatch = text.match(/^##\s*Tasks\s*\n([\s\S]*)$/mi)
-
-  if (!planMatch || !tasksMatch) {
-    // Visual feedback — flash border red briefly
-    formEditor.style.borderColor = 'var(--red)'
-    setTimeout(() => { formEditor.style.borderColor = '' }, 1200)
+  if (!goal) {
+    goalInput.style.borderColor = 'var(--red)'
+    setTimeout(() => { goalInput.style.borderColor = '' }, 1200)
+    goalInput.focus()
+    return
+  }
+  if (!tasks || tasks.split('\n').every(l => l.trim() === TASK_STUB || !l.trim())) {
+    tasksInput.style.borderColor = 'var(--red)'
+    setTimeout(() => { tasksInput.style.borderColor = '' }, 1200)
+    tasksInput.focus()
     return
   }
 
-  let plan  = planMatch[1].trim()
-  const tasks = tasksMatch[1].trim()
-
+  let plan = goal
+  if (constraints) plan += '\n\n## Constraints\n' + constraints
   if (selectedFiles.length > 0) {
     plan += '\n\n## Context Files\n' + selectedFiles.map(f => `- ${f}`).join('\n')
   }
@@ -690,8 +733,16 @@ function handleSendDraft() {
 }
 
 function clearForm() {
-  formEditor.value = ''
-  formEditor.focus()
+  goalInput.value        = ''
+  constraintsInput.value = ''
+  tasksInput.value       = ''
+  selectedFiles          = []
+  renderFileChips()
+  // Reset task count radio to 1
+  document.querySelectorAll('#taskCountGroup .radio-opt').forEach(l => l.classList.remove('active'))
+  const first = document.querySelector('#taskCountGroup .radio-opt')
+  if (first) { first.classList.add('active'); first.querySelector('input').checked = true }
+  goalInput.focus()
 }
 
 // ── ollama streaming ──────────────────────────────────────────────────────────
