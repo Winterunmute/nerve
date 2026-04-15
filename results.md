@@ -727,3 +727,16 @@ This was appended in a prior run. The task is complete — no changes needed.
 
 ---
 
+## If you feel tempted to assume a build system, project structure, tooling, or runtime behavior — stop and ask a question. Do not proceed with assumptions.
+
+**Completed:** 2026-04-15 20:27:59
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+I've read both `~/CLAUDE.md` (the Zero System overview, loaded via system-reminder) and `~/projects/nerve/CLAUDE.md` (which just says to read those two files).
+
+Understood on the task instruction. Before I proceed with anything in this project, I'll stop and ask rather than assume.
+
+What would you like me to do?
+
+---
+
