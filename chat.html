@@ -349,14 +349,16 @@
 <div class="messages" id="messages"></div>
 
 <div class="form-view" id="formView">
-  <div class="form-label">
-    Direct dispatch <span class="form-tag">## Plan → plan.md</span><span class="form-tag">## Tasks → tasks.md</span>
-  </div>
+  <div class="form-label">task <span class="form-opt">direct dispatch — ## Plan → plan.md  ## Tasks → tasks.md</span></div>
   <textarea id="formEditor" placeholder="## Plan&#10;Describe what you want to build...&#10;&#10;## Tasks&#10;- First task&#10;- Second task"></textarea>
-  <div class="form-hint">
-    <span>Use <code>## Plan</code> and <code>## Tasks</code> sections</span>
-    <span>One <code>- item</code> per task</span>
+  <div class="form-label">files <span class="form-opt">optional — reference files for context</span></div>
+  <div class="file-add-row">
+    <input type="text" id="fileInput" class="form-input" list="fileDatalist"
+           placeholder="type to filter project files..." autocomplete="off">
+    <datalist id="fileDatalist"></datalist>
+    <button class="btn-sm" id="fileAddBtn" onclick="addFileChip()">add</button>
   </div>
+  <div class="chip-list" id="fileChips"></div>
 </div>
 
 <div class="footer">
@@ -412,6 +414,55 @@ const chatActions  = document.getElementById('chatActions')
 const formActions  = document.getElementById('formActions')
 
 let isFormView = false
+let selectedFiles = []
+
+// ── file multi-select ─────────────────────────────────────────────────────────
+
+async function loadProjectFiles() {
+  try {
+    const files = await ipcRenderer.invoke('list-project-files')
+    const dl = document.getElementById('fileDatalist')
+    dl.innerHTML = ''
+    for (const f of files) {
+      const opt = document.createElement('option')
+      opt.value = f
+      dl.appendChild(opt)
+    }
+    const btn = document.getElementById('fileAddBtn')
+    if (files.length === 0) {
+      btn.disabled = true
+      document.getElementById('fileInput').placeholder = 'no project files found'
+    }
+  } catch {}
+}
+
+function addFileChip() {
+  const input = document.getElementById('fileInput')
+  const val = input.value.trim()
+  if (!val || selectedFiles.includes(val)) { input.value = ''; return }
+  selectedFiles.push(val)
+  renderFileChips()
+  input.value = ''
+  input.focus()
+}
+
+function removeFileChip(f) {
+  selectedFiles = selectedFiles.filter(x => x !== f)
+  renderFileChips()
+}
+
+function renderFileChips() {
+  const list = document.getElementById('fileChips')
+  list.innerHTML = ''
+  for (const f of selectedFiles) {
+    const chip = document.createElement('div')
+    chip.className = 'chip'
+    chip.innerHTML =
+      `<span title="${esc(f)}">${esc(f)}</span>` +
+      `<button class="chip-remove" onclick="removeFileChip(${JSON.stringify(f)})">×</button>`
+    list.appendChild(chip)
+  }
+}
 
 // ── view toggle ───────────────────────────────────────────────────────────────
 
@@ -438,13 +489,17 @@ function toggleView() {
 
 // ── init ─────────────────────────────────────────────────────────────────────
 
-window.addEventListener('DOMContentLoaded', () => { loadModels(); loadContext() })
+window.addEventListener('DOMContentLoaded', () => { loadModels(); loadContext(); loadProjectFiles() })
 
 chatInput.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !isStreaming) {
     e.preventDefault()
     handleSend()
   }
+})
+
+document.getElementById('fileInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addFileChip() }
 })
 
 // ── model selector ────────────────────────────────────────────────────────────
@@ -623,8 +678,13 @@ function handleSendDraft() {
     return
   }
 
-  const plan  = planMatch[1].trim()
+  let plan  = planMatch[1].trim()
   const tasks = tasksMatch[1].trim()
+
+  if (selectedFiles.length > 0) {
+    plan += '\n\n## Context Files\n' + selectedFiles.map(f => `- ${f}`).join('\n')
+  }
+
   ipcRenderer.send('nerve-draft-ready', { plan, tasks })
   toggleView() // switch back to chat view
 }

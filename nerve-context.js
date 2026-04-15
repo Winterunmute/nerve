@@ -177,4 +177,32 @@ async function assembleContext(projectName, syncPath) {
   return { context: parts.join('\n\n---\n\n'), summary }
 }
 
-module.exports = { assembleContext }
+function listProjectFiles(projectName, syncPath) {
+  if (!projectName) return []
+  const home = os.homedir()
+  const nativeProjDir = path.join(home, 'projects', projectName)
+  const syncProjDir = syncPath ? path.join(syncPath, projectName) : null
+  const projDir = fs.existsSync(nativeProjDir) ? nativeProjDir
+    : (syncProjDir && fs.existsSync(syncProjDir) ? syncProjDir : null)
+  if (!projDir) return []
+
+  function walk(dir, rel) {
+    const files = []
+    let entries
+    try { entries = fs.readdirSync(dir, { withFileTypes: true }) } catch { return files }
+    for (const e of entries) {
+      if (SKIP_DIRS.has(e.name) || e.name.startsWith('.')) continue
+      const relPath = rel ? `${rel}/${e.name}` : e.name
+      if (e.isDirectory()) {
+        files.push(...walk(path.join(dir, e.name), relPath))
+      } else {
+        files.push(relPath)
+      }
+    }
+    return files
+  }
+
+  return walk(projDir, '')
+}
+
+module.exports = { assembleContext, listProjectFiles }

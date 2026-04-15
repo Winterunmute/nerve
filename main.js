@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
-const { assembleContext } = require('./nerve-context')
+const { assembleContext, listProjectFiles } = require('./nerve-context')
 
 let tray   = null
 let win    = null
@@ -164,6 +164,11 @@ ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, task
   } catch (err) {
     return { success: false, error: err.message }
   }
+})
+
+// IPC: list project files for file multi-select
+ipcMain.handle('list-project-files', async () => {
+  return listProjectFiles(chatParams.projectName, chatParams.syncPath)
 })
 
 // IPC: browse for sync folder

@@ -856,3 +856,24 @@ You're out of extra usage · resets 1am (Europe/Stockholm)
 
 ---
 
+## Populate the file multi-select from the loaded project file tree context
+
+**Completed:** 2026-04-16 01:27:58
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Everything looks correct. Here's a summary of what was done:
+
+**`nerve-context.js`** — added `listProjectFiles(projectName, syncPath)` which walks the project directory (same skip rules as `buildFileTree`) and returns a flat array of relative file paths.
+
+**`main.js`** — updated the import to include `listProjectFiles`, added `ipcMain.handle('list-project-files', ...)` which delegates to the new function using the already-stored `chatParams`.
+
+**`chat.html`** — three changes:
+1. Form view now has a files section: a text input with `<datalist>` (native browser autocomplete/filter) + "add" button + chip list below
+2. New JS functions: `loadProjectFiles()` (called on DOMContentLoaded — populates the datalist from IPC), `addFileChip()`, `removeFileChip()`, `renderFileChips()`
+3. `handleSendDraft()` appends a `## Context Files` section to the plan when files are selected
+4. Enter key on the file input triggers `addFileChip()`
+
+The file input uses a native `<datalist>` which gives browser-native autocomplete/filtering as the user types — no custom dropdown needed.
+
+---
+
