@@ -898,3 +898,44 @@ Everything looks correct. Here's what was implemented:
 
 ---
 
+## Wire up to nerve-draft-ready IPC to populate main textarea
+
+**Completed:** 2026-04-16 01:31:15
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+I can see the full IPC chain by reading the existing code. Let me trace it:
+
+**In `chat.html`** — two senders:
+- `handleGenerate()` (line 692): sends `nerve-draft-ready` after AI stream
+- `handleSendDraft()` (line 731): sends `nerve-draft-ready` from form
+
+**In `main.js`** (lines 125–131) — already forwards to main window:
+```js
+ipcMain.on('nerve-draft-ready', (event, { plan, tasks }) => {
+  if (win && !win.isDestroyed()) {
+    win.webContents.send('nerve-draft-ready', { plan, tasks })
+    win.show()
+    win.focus()
+  }
+})
+```
+
+**In `index.html`** (lines 476–480) — already populates the editor:
+```js
+ipcRenderer.on('nerve-draft-ready', (event, { plan, tasks }) => {
+  editor.value = '## Plan\n' + plan + '\n\n## Tasks\n' + tasks
+  setStatus('✓ AI draft loaded — review and dispatch', 'ok', 6000)
+  editor.focus()
+})
+```
+
+The full IPC chain is already wired end-to-end:
+
+1. `chat.html` sends `nerve-draft-ready` (both the chat generate path and the new form path added in commit `b554aad`)
+2. `main.js` receives it and forwards to the main window renderer, then brings `win` to focus
+3. `index.html` receives it and writes `## Plan\n{plan}\n\n## Tasks\n{tasks}` into the `editor` textarea
+
+No code changes needed — this task is already complete.
+
+---
+
