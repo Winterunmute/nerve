@@ -65,6 +65,7 @@
   }
   .titlebar-btn:hover { background: var(--surface2); color: var(--text-bright); }
   .titlebar-btn.close:hover { background: rgba(224,108,117,0.2); color: var(--red); }
+  .titlebar-btn.active { color: var(--blue); background: var(--surface2); }
 
   .model-select {
     -webkit-app-region: no-drag;
@@ -230,6 +231,55 @@
     align-items: center;
   }
   #generateBtn { flex: 1; }
+
+  /* ── form view ── */
+  .form-view {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    padding: 14px 18px 8px;
+    gap: 8px;
+    min-height: 0;
+  }
+  .form-view.visible { display: flex; }
+
+  .form-label {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .form-tag {
+    font-size: 9px; padding: 1px 5px; border-radius: 3px;
+    border: 1px solid var(--green-dim); color: var(--green);
+    text-transform: none; letter-spacing: 0;
+  }
+
+  #formEditor {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-bright);
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-user-select: text;
+    user-select: text;
+    tab-size: 2;
+    min-height: 0;
+  }
+  #formEditor:focus { border-color: var(--blue-dim); }
+  #formEditor::placeholder { color: var(--muted); line-height: 2; }
+
+  .form-hint {
+    font-size: 10px; color: var(--muted);
+    display: flex; gap: 14px;
+  }
+  .form-hint code { color: var(--green); font-size: 10px; }
 </style>
 </head>
 <body>
@@ -238,6 +288,7 @@
   <div class="title-dot"></div>
   <span class="titlebar-text">NERVE // AI DRAFT <span class="titlebar-proj" id="projLabel"></span></span>
   <select class="model-select" id="modelSelect" title="Ollama model"></select>
+  <button class="titlebar-btn" id="toggleViewBtn" onclick="toggleView()" title="Toggle form / chat">≡</button>
   <button class="titlebar-btn" onclick="ipcRenderer.send('minimize-window')" title="Minimize">─</button>
   <button class="titlebar-btn close" onclick="window.close()" title="Close">✕</button>
 </div>
@@ -245,15 +296,30 @@
 
 <div class="messages" id="messages"></div>
 
+<div class="form-view" id="formView">
+  <div class="form-label">
+    Direct dispatch <span class="form-tag">## Plan → plan.md</span><span class="form-tag">## Tasks → tasks.md</span>
+  </div>
+  <textarea id="formEditor" placeholder="## Plan&#10;Describe what you want to build...&#10;&#10;## Tasks&#10;- First task&#10;- Second task"></textarea>
+  <div class="form-hint">
+    <span>Use <code>## Plan</code> and <code>## Tasks</code> sections</span>
+    <span>One <code>- item</code> per task</span>
+  </div>
+</div>
+
 <div class="footer">
   <div class="input-row">
     <span class="input-prefix">&gt;</span>
     <input type="text" id="chatInput" placeholder="describe what you want to build..." disabled>
     <button class="btn" id="sendBtn" onclick="handleSend()" disabled>send</button>
   </div>
-  <div class="action-row">
+  <div class="action-row" id="chatActions">
     <button class="btn primary" id="generateBtn" onclick="handleGenerate()" disabled>◉ generate draft</button>
     <button class="btn" onclick="clearChat()">clear</button>
+  </div>
+  <div class="action-row" id="formActions" style="display:none">
+    <button class="btn primary" id="sendDraftBtn" onclick="handleSendDraft()">◉ send to NERVE</button>
+    <button class="btn" onclick="clearForm()">clear</button>
   </div>
 </div>
 
@@ -280,13 +346,43 @@ let conversationHistory = []
 let isStreaming = false
 let systemPrompt = ''
 
-const messagesEl  = document.getElementById('messages')
-const chatInput   = document.getElementById('chatInput')
-const sendBtn     = document.getElementById('sendBtn')
-const generateBtn = document.getElementById('generateBtn')
-const loadingBar  = document.getElementById('loadingBar')
-const projLabel   = document.getElementById('projLabel')
-const modelSelect = document.getElementById('modelSelect')
+const messagesEl   = document.getElementById('messages')
+const formView     = document.getElementById('formView')
+const formEditor   = document.getElementById('formEditor')
+const chatInput    = document.getElementById('chatInput')
+const sendBtn      = document.getElementById('sendBtn')
+const generateBtn  = document.getElementById('generateBtn')
+const loadingBar   = document.getElementById('loadingBar')
+const projLabel    = document.getElementById('projLabel')
+const modelSelect  = document.getElementById('modelSelect')
+const toggleViewBtn = document.getElementById('toggleViewBtn')
+const chatActions  = document.getElementById('chatActions')
+const formActions  = document.getElementById('formActions')
+
+let isFormView = false
+
+// ── view toggle ───────────────────────────────────────────────────────────────
+
+function toggleView() {
+  isFormView = !isFormView
+  messagesEl.style.display  = isFormView ? 'none' : ''
+  formView.classList.toggle('visible', isFormView)
+  chatActions.style.display = isFormView ? 'none' : ''
+  formActions.style.display = isFormView ? '' : 'none'
+
+  // Update the input row — hide chat input in form mode
+  const inputRow = document.querySelector('.input-row')
+  inputRow.style.display = isFormView ? 'none' : ''
+
+  toggleViewBtn.classList.toggle('active', isFormView)
+  toggleViewBtn.title = isFormView ? 'Switch to chat' : 'Switch to form'
+
+  if (isFormView) {
+    formEditor.focus()
+  } else {
+    if (!chatInput.disabled) chatInput.focus()
+  }
+}
 
 // ── init ─────────────────────────────────────────────────────────────────────
 
@@ -457,6 +553,33 @@ function clearChat() {
   conversationHistory = []
   messagesEl.innerHTML = ''
   addMsg('system', '·', 'Chat cleared. Context and system prompt are still loaded.')
+}
+
+// ── form view handlers ────────────────────────────────────────────────────────
+
+function handleSendDraft() {
+  const text = formEditor.value.trim()
+  if (!text) return
+
+  const planMatch  = text.match(/^##\s*Plan\s*\n([\s\S]*?)(?=^##\s*Tasks)/mi)
+  const tasksMatch = text.match(/^##\s*Tasks\s*\n([\s\S]*)$/mi)
+
+  if (!planMatch || !tasksMatch) {
+    // Visual feedback — flash border red briefly
+    formEditor.style.borderColor = 'var(--red)'
+    setTimeout(() => { formEditor.style.borderColor = '' }, 1200)
+    return
+  }
+
+  const plan  = planMatch[1].trim()
+  const tasks = tasksMatch[1].trim()
+  ipcRenderer.send('nerve-draft-ready', { plan, tasks })
+  toggleView() // switch back to chat view
+}
+
+function clearForm() {
+  formEditor.value = ''
+  formEditor.focus()
 }
 
 // ── ollama streaming ──────────────────────────────────────────────────────────

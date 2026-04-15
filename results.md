@@ -823,3 +823,23 @@ Here's the structure of `chat.html`:
 
 ---
 
+## Add form/chat toggle button to the chat window header
+
+**Completed:** 2026-04-15 22:16:14
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Everything looks correct. Here's a summary of what was added:
+
+**Titlebar** — a `≡` button (`id="toggleViewBtn"`) placed between the model selector and minimize button. It highlights blue (`.active` class) when form mode is active.
+
+**Form view panel** (`id="formView"`) — a hidden flex panel with:
+- A label showing the `## Plan` / `## Tasks` → file mapping
+- A full-height `<textarea id="formEditor">` for direct entry
+- A hint line about format
+
+**Footer** — the action row is split into `#chatActions` (existing) and `#formActions` (new, with "◉ send to NERVE" and "clear"). The chat input row is also hidden in form mode.
+
+**JS** — `toggleView()` swaps visibility of all the right elements and manages the button's active state. `handleSendDraft()` parses `## Plan` / `## Tasks` from the textarea, sends `nerve-draft-ready` to the main window (same IPC as the AI generate path), then switches back to chat. If the format is wrong it flashes the textarea border red. `clearForm()` clears the textarea.
+
+---
+

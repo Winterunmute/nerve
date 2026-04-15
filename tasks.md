@@ -1,5 +1,5 @@
 - [x] Read ~/projects/nerve/chat.html to understand current structure
-- [ ] Add form/chat toggle button to the chat window header
+- [x] Add form/chat toggle button to the chat window header
 - [ ] Build the structured form UI — textarea, file multi-select, constraints input, task count radio
 - [ ] Populate the file multi-select from the loaded project file tree context
 - [ ] Implement form-based draft assembly — build plan.md and tasks stub from form values
