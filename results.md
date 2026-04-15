@@ -698,3 +698,16 @@ No changes needed — the rule is already in place. The pipeline can mark this t
 
 ---
 
+## You may suggest improvements only if they operate on existing files and reuse existing mechanisms. If a suggestion introduces new system components, label it "Unimplemented idea — requires explicit user approval" and stop.
+
+**Completed:** 2026-04-15 20:26:53
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+Understood. The constraint is noted and will be applied:
+
+**Safe Suggestion Rule (active):** Improvements will only be proposed if they operate on existing files using existing mechanisms. Any suggestion that requires a new system component, script, daemon, service, or execution layer will be labeled **"Unimplemented idea — requires explicit user approval"** and will not be developed further without that approval.
+
+No changes to make — this is a behavioral directive, not a code task.
+
+---
+

@@ -50,25 +50,23 @@ existing files to modify, and any conventions to follow.
 
 ## Scheduling tasks
 
-To defer processing until a specific time, add a `run at HH:MM` directive as
-the **very first line** of the Plan section (before any other text):
+To defer processing until a specific time, write a `scheduling.md` file into
+the project's sync folder alongside `tasks.md`:
 
+**`~/sync/<project>/scheduling.md`**
 ```
-run at 22:30
-
-## Plan
-Describe what you want Epyon to build...
-
-## Tasks
-- First task
+run at HH:MM
 ```
+
+NERVE creates this file when a scheduled dispatch is sent. Zero System reads it
+at the top of its drain loop before running any tasks.
 
 - Uses 24-hour clock, zero-padded: `run at 02:00`, `run at 22:30`, `run at 09:15`
-- Must be the very first line — no leading blank lines
-- If the time has already passed when Epyon receives the dispatch, it schedules
-  for the same time the next day
-- Zero System logs `[project] Scheduled for HH:MM — waiting Xs` and re-triggers
-  at the right time automatically
+- `scheduling.md` is a one-shot file — Zero System deletes it after reading
+- If the scheduled time has already passed, the task is queued for the same
+  time the next day
+- Zero System logs `[project] Scheduled for HH:MM via at — scheduling.md removed`
+  and re-triggers automatically at the right time via `touch tasks.md`
 
 ## The name
 
