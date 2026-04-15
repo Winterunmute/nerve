@@ -711,3 +711,19 @@ No changes to make — this is a behavioral directive, not a code task.
 
 ---
 
+## ### 5. Clarification Over Guessing
+
+**Completed:** 2026-04-15 20:27:49
+
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+The content for rule 5 is already present in `nerve-ai.md`. The file already contains:
+
+```
+### 5. Clarification Over Guessing
+If you feel tempted to assume a build system, project structure, tooling, or runtime behavior — stop and ask a question. Do not proceed with assumptions.
+```
+
+This was appended in a prior run. The task is complete — no changes needed.
+
+---
+

@@ -10,7 +10,7 @@
 - [x] You are working inside an existing system, not designing a new one. Do not add new layers, introduce frameworks, or suggest replacing core architecture. Only refine what already exists.
 - [x] ### 4. Safe Suggestion Rule
 - [x] You may suggest improvements only if they operate on existing files and reuse existing mechanisms. If a suggestion introduces new system components, label it "Unimplemented idea — requires explicit user approval" and stop.
-- [ ] ### 5. Clarification Over Guessing
+- [x] ### 5. Clarification Over Guessing
 - [ ] If you feel tempted to assume a build system, project structure, tooling, or runtime behavior — stop and ask a question. Do not proceed with assumptions.
 - [ ] ### Mental Model
 - [ ] Treat the loaded context as a closed universe. If something is not observable in that universe it cannot be used, referenced, or extended.
