@@ -962,3 +962,24 @@ Warning: no stdin data received in 3s, proceeding without it. If piping from a s
 
 ---
 
+## [plan-only] Read ~/CLAUDE.md and ~/projects/zero-system/CLAUDE.md first.
+
+**Completed:** 2026-04-17 20:50:56
+
+Everything looks correct. Both changes are implemented:
+
+**Change 1 — Auto-plan default:**
+- `planOnlyCheck` has `checked` attribute in HTML
+- `togglePlanOnly()` now injects a `+ add tasks` / `− hide tasks` inline link into the editor label
+- `toggleAddTasks()` flips the checkbox and re-applies the mode
+- `clearAll()` resets to `planOnlyCheck = true`
+- `DOMContentLoaded` calls `togglePlanOnly()` to initialize label/placeholder
+
+**Change 2 — Onboard button:**
+- `⊕ onboard` button in footer toggles `#onboardPanel`
+- Panel has a repo input + confirm/cancel buttons
+- `repoToProjectName()` strips URL prefix and takes the last path segment
+- `confirmOnboard()` dispatches a plan-only package via the existing `save-project` IPC with plan text `Run zero-onboard <repo> and report results to results.md`, project name derived from the repo
+
+---
+

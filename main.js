@@ -131,36 +131,28 @@ ipcMain.on('nerve-draft-ready', (event, { plan, tasks }) => {
 })
 
 // IPC: save files to sync folder
-ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, tasks, scheduledAt }) => {
+ipcMain.handle('save-project', async (event, { projectName, syncPath, plan, tasks, scheduledAt, planOnly }) => {
   try {
-    const projectDir = path.join(syncPath, projectName)
+    const timestamp = Date.now()
+    const queueDir = path.join(syncPath, projectName, 'queue', String(timestamp))
 
-    if (!fs.existsSync(projectDir)) {
-      fs.mkdirSync(projectDir, { recursive: true })
+    fs.mkdirSync(queueDir, { recursive: true })
+
+    fs.writeFileSync(path.join(queueDir, 'plan.md'), plan, 'utf8')
+
+    // Plan-only mode: skip tasks.md — Claude plans and executes from plan.md alone.
+    // The pipeline triggers on plan.md written to a queue/<ts>/ dir.
+    if (!planOnly) {
+      const tasksContent = tasks.map(t => `- [ ] ${t}`).join('\n') + '\n'
+      fs.writeFileSync(path.join(queueDir, 'tasks.md'), tasksContent, 'utf8')
     }
 
-    fs.writeFileSync(path.join(projectDir, 'plan.md'), plan, 'utf8')
-
-    const tasksContent = tasks.map(t => `- [ ] ${t}`).join('\n') + '\n'
-    fs.writeFileSync(path.join(projectDir, 'tasks.md'), tasksContent, 'utf8')
-
-    // Write or clear SCHEDULED_AT in .zero-config
-    const configPath = path.join(projectDir, '.zero-config')
-    let configLines = fs.existsSync(configPath)
-      ? fs.readFileSync(configPath, 'utf8').split('\n').filter(l => !l.startsWith('SCHEDULED_AT=') && l !== '')
-      : []
-    if (scheduledAt) configLines.push(`SCHEDULED_AT=${scheduledAt}`)
-    fs.writeFileSync(configPath, configLines.join('\n') + (configLines.length ? '\n' : ''), 'utf8')
-
-    // Write or remove scheduling.md
-    const schedulingPath = path.join(projectDir, 'scheduling.md')
     if (scheduledAt) {
-      fs.writeFileSync(schedulingPath, `run at ${scheduledAt}\n`, 'utf8')
-    } else if (fs.existsSync(schedulingPath)) {
-      fs.unlinkSync(schedulingPath)
+      fs.writeFileSync(path.join(queueDir, '.zero-config'), `SCHEDULED_AT=${scheduledAt}\n`, 'utf8')
+      fs.writeFileSync(path.join(queueDir, 'scheduling.md'), `run at ${scheduledAt}\n`, 'utf8')
     }
 
-    return { success: true, path: projectDir }
+    return { success: true, path: queueDir }
   } catch (err) {
     return { success: false, error: err.message }
   }

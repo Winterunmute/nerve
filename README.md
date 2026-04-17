@@ -29,13 +29,16 @@ npm run build
 
 1. Click the tray icon to open NERVE
 2. Enter a project name
-3. Write your dispatch using `## Plan` and `## Tasks` sections
+3. Write your dispatch (see formats below)
 4. Click **◉ dispatch to epyon**
 5. NERVE creates the folder and files in your sync folder
 6. Syncthing pushes to Epyon
 7. Zero System picks it up and starts building
 
-## Dispatch format
+## Dispatch formats
+
+### Standard (tasks mode)
+Write a `## Plan` and `## Tasks` section. Zero System runs one Claude Code session per task line and marks each done as it goes.
 
 ```
 ## Plan
@@ -47,6 +50,17 @@ existing files to modify, and any conventions to follow.
 - Second task
 - Third task
 ```
+
+### Plan-only (auto-plan mode)
+Check **auto-plan** in the footer. Write only a `## Plan` — no tasks needed. Zero System passes the full plan to a single Claude Code session and trusts Claude to break down and execute the work itself.
+
+```
+## Plan
+Describe what you want Epyon to build. Claude will figure out
+the steps and execute them in one session.
+```
+
+Plan-only mode uses one Claude Code session per work package instead of one per task line, which reduces usage significantly for complex requests.
 
 ## Scheduling tasks
 

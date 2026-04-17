@@ -307,10 +307,10 @@
   </div>
 
   <div class="editor-wrap">
-    <div class="editor-label">
-      Dispatch <span class="tag">## Plan → plan.md</span><span class="tag">## Tasks → tasks.md</span>
+    <div class="editor-label" id="editorLabel">
+      Dispatch <span class="tag">## Plan → plan.md</span>
     </div>
-    <textarea id="editor" placeholder="## Plan&#10;Describe what you want Epyon to build...&#10;&#10;## Tasks&#10;- Build initial version based on plan.md&#10;- Add error handling&#10;- Write tests"></textarea>
+    <textarea id="editor" placeholder="## Plan&#10;Describe what you want Epyon to build..."></textarea>
     <div class="hint">
       <span>Use <code>## Plan</code> and <code>## Tasks</code> sections</span>
       <span>Tasks: one <code>- item</code> per line</span>
@@ -318,9 +318,19 @@
   </div>
 </div>
 
+<div id="onboardPanel" style="display:none; background:var(--surface); border-top:1px solid var(--border); padding:10px 20px; flex-shrink:0">
+  <div style="display:flex; gap:8px; align-items:center">
+    <span style="font-size:10px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; white-space:nowrap; flex-shrink:0">Repo</span>
+    <input type="text" id="onboardRepo" placeholder="user/repo or https://github.com/user/repo" style="flex:1" />
+    <button class="btn primary" onclick="confirmOnboard()">confirm</button>
+    <button class="btn" onclick="toggleOnboard()">cancel</button>
+  </div>
+</div>
+
 <div class="footer">
   <button class="btn primary" onclick="dispatch()">◉ dispatch to epyon</button>
   <button class="btn" onclick="openAIChat()">✦ draft with AI</button>
+  <button class="btn" onclick="toggleOnboard()">⊕ onboard</button>
   <button class="btn" onclick="clearAll()">clear</button>
   <div class="schedule-wrap">
     <label class="schedule-check-label">
@@ -328,6 +338,12 @@
       schedule
     </label>
     <input type="time" id="scheduleTime" class="schedule-time-input" style="display:none" value="08:00" />
+  </div>
+  <div class="schedule-wrap">
+    <label class="schedule-check-label" title="Skip tasks.md — Claude plans and executes from plan.md alone">
+      <input type="checkbox" id="planOnlyCheck" checked onchange="togglePlanOnly()" />
+      auto-plan
+    </label>
   </div>
   <span class="status" id="status"></span>
 </div>
@@ -342,22 +358,46 @@ const statusEl     = document.getElementById('status')
 const preview      = document.getElementById('preview')
 const scheduleCheck = document.getElementById('scheduleCheck')
 const scheduleTime  = document.getElementById('scheduleTime')
+const planOnlyCheck = document.getElementById('planOnlyCheck')
 
 function toggleScheduleTime() {
   scheduleTime.style.display = scheduleCheck.checked ? '' : 'none'
   if (scheduleCheck.checked) scheduleTime.focus()
 }
 
+function togglePlanOnly() {
+  const planOnly = planOnlyCheck.checked
+  const editorLabel = document.getElementById('editorLabel')
+  if (planOnly) {
+    editorLabel.innerHTML = 'Dispatch <span class="tag">## Plan → plan.md</span> <a href="#" onclick="toggleAddTasks(event)" style="font-size:9px;color:var(--muted);margin-left:4px;text-decoration:none;letter-spacing:0">+ add tasks</a>'
+    editor.placeholder = '## Plan\nDescribe what you want Epyon to build...'
+  } else {
+    editorLabel.innerHTML = 'Dispatch <span class="tag">## Plan → plan.md</span><span class="tag">## Tasks → tasks.md</span> <a href="#" onclick="toggleAddTasks(event)" style="font-size:9px;color:var(--muted);margin-left:4px;text-decoration:none;letter-spacing:0">− hide tasks</a>'
+    editor.placeholder = '## Plan\nDescribe what you want Epyon to build...\n\n## Tasks\n- Build initial version based on plan.md\n- Add error handling\n- Write tests'
+  }
+  updatePreview()
+}
+
+function toggleAddTasks(e) {
+  e.preventDefault()
+  planOnlyCheck.checked = !planOnlyCheck.checked
+  togglePlanOnly()
+}
+
 function updatePreview() {
   const proj = projInput.value.trim() || '<project>'
   const base = pathInput.value.trim() || 'C:\\Users\\Ricka\\sync'
-  preview.innerHTML = '→ <span>' + base + '\\' + proj + '\\</span>plan.md + tasks.md'
+  const files = planOnlyCheck.checked ? 'plan.md' : 'plan.md + tasks.md'
+  preview.innerHTML = '→ <span>' + base + '\\' + proj + '\\</span>' + files
 }
 projInput.addEventListener('input', updatePreview)
 pathInput.addEventListener('input', () => { updatePreview(); refreshProjects() })
 
-// Load projects on startup
-window.addEventListener('DOMContentLoaded', refreshProjects)
+// Load projects on startup and apply default auto-plan state
+window.addEventListener('DOMContentLoaded', () => {
+  refreshProjects()
+  togglePlanOnly()
+})
 
 document.getElementById('projectSelect').addEventListener('change', function () {
   if (this.value) { projInput.value = this.value; updatePreview() }
@@ -392,14 +432,25 @@ async function browseSyncFolder() {
 async function dispatch() {
   const proj = projInput.value.trim()
   const text = editor.value.trim()
+  const planOnly = planOnlyCheck.checked
 
   if (!proj) { setStatus('✗ enter a project name', 'err'); projInput.focus(); return }
   if (!text) { setStatus('✗ write something first', 'err'); editor.focus(); return }
 
-  const { plan, tasks } = parseContent(text)
+  let plan, tasks
 
-  if (!plan)         { setStatus('✗ need a ## Plan section', 'err'); return }
-  if (!tasks.length) { setStatus('✗ need a ## Tasks section with at least one - item', 'err'); return }
+  if (planOnly) {
+    const planMatch = text.match(/^##\s*Plan\s*\n([\s\S]*)/mi)
+    plan = planMatch ? planMatch[1].trim() : text.trim()
+    tasks = []
+    if (!plan) { setStatus('✗ need a plan description', 'err'); return }
+  } else {
+    const parsed = parseContent(text)
+    plan = parsed.plan
+    tasks = parsed.tasks
+    if (!plan)         { setStatus('✗ need a ## Plan section', 'err'); return }
+    if (!tasks.length) { setStatus('✗ need a ## Tasks section with at least one - item', 'err'); return }
+  }
 
   const scheduledAt = scheduleCheck.checked ? scheduleTime.value : null
 
@@ -408,7 +459,8 @@ async function dispatch() {
     syncPath: pathInput.value.trim(),
     plan,
     tasks,
-    scheduledAt
+    scheduledAt,
+    planOnly
   })
 
   if (result.success) {
@@ -458,11 +510,12 @@ async function loadProject() {
 function clearAll() {
   editor.value = ''
   projInput.value = ''
-  updatePreview()
   statusEl.textContent = ''
   scheduleCheck.checked = false
   scheduleTime.style.display = 'none'
   scheduleTime.value = '08:00'
+  planOnlyCheck.checked = true
+  togglePlanOnly()  // resets editor label and placeholder, calls updatePreview
   projInput.focus()
 }
 
@@ -470,6 +523,43 @@ async function openAIChat() {
   const proj     = projInput.value.trim()
   const syncPath = pathInput.value.trim()
   await ipcRenderer.invoke('open-chat', { projectName: proj, syncPath })
+}
+
+function toggleOnboard() {
+  const panel = document.getElementById('onboardPanel')
+  const visible = panel.style.display !== 'none'
+  panel.style.display = visible ? 'none' : ''
+  if (!visible) document.getElementById('onboardRepo').focus()
+}
+
+function repoToProjectName(repo) {
+  return repo.trim().replace(/\/$/, '').split('/').pop() || ''
+}
+
+async function confirmOnboard() {
+  const repo = document.getElementById('onboardRepo').value.trim()
+  if (!repo) { setStatus('✗ enter a repo', 'err'); return }
+  const proj = repoToProjectName(repo)
+  if (!proj) { setStatus('✗ could not derive project name', 'err'); return }
+
+  const plan = `Run zero-onboard ${repo} and report results to results.md`
+  const result = await ipcRenderer.invoke('save-project', {
+    projectName: proj,
+    syncPath: pathInput.value.trim(),
+    plan,
+    tasks: [],
+    scheduledAt: null,
+    planOnly: true
+  })
+
+  if (result.success) {
+    setStatus('✓ onboard dispatched → ' + proj, 'ok', 5000)
+    document.getElementById('onboardPanel').style.display = 'none'
+    document.getElementById('onboardRepo').value = ''
+    setTimeout(() => ipcRenderer.send('close-window'), 1500)
+  } else {
+    setStatus('✗ ' + result.error, 'err', 0)
+  }
 }
 
 // Receive draft from AI chat window — populate editor
