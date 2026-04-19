@@ -983,3 +983,11 @@ Everything looks correct. Both changes are implemented:
 
 ---
 
+## [plan-only] Read ~/projects/nerve/README.md before making changes.
+
+**Completed:** 2026-04-19 14:26:54
+
+README rewritten — 113 lines, well under 150. Covers all current features: tray app, plan-only vs plan+tasks modes, schedule checkbox with time field, load existing dropdown, Draft with AI (Ollama), and onboard for GitHub repos.
+
+---
+

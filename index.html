@@ -285,7 +285,7 @@
     <div class="field" style="flex:2">
       <div class="field-label">Sync folder</div>
       <div class="input-with-btn">
-        <input type="text" id="pathInput" value="C:\Users\Ricka\sync" />
+        <input type="text" id="pathInput" value="" />
         <button class="btn-browse" onclick="browseSyncFolder()">browse</button>
       </div>
     </div>
@@ -303,7 +303,7 @@
   </div>
 
   <div class="preview-path" id="preview">
-    → <span>C:\Users\Ricka\sync\&lt;project&gt;\</span>plan.md + tasks.md
+    → <span>&lt;sync&gt;/&lt;project&gt;/</span>plan.md + tasks.md
   </div>
 
   <div class="editor-wrap">
@@ -350,6 +350,8 @@
 
 <script>
 const { ipcRenderer } = require('electron')
+const os = require('os')
+const pathModule = require('path')
 
 const projInput    = document.getElementById('projInput')
 const pathInput    = document.getElementById('pathInput')
@@ -386,7 +388,7 @@ function toggleAddTasks(e) {
 
 function updatePreview() {
   const proj = projInput.value.trim() || '<project>'
-  const base = pathInput.value.trim() || 'C:\\Users\\Ricka\\sync'
+  const base = pathInput.value.trim() || pathModule.join(os.homedir(), 'sync')
   const files = planOnlyCheck.checked ? 'plan.md' : 'plan.md + tasks.md'
   preview.innerHTML = '→ <span>' + base + '\\' + proj + '\\</span>' + files
 }
@@ -395,6 +397,7 @@ pathInput.addEventListener('input', () => { updatePreview(); refreshProjects() }
 
 // Load projects on startup and apply default auto-plan state
 window.addEventListener('DOMContentLoaded', () => {
+  if (!pathInput.value) pathInput.value = pathModule.join(os.homedir(), 'sync')
   refreshProjects()
   togglePlanOnly()
 })

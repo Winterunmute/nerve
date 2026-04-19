@@ -1,16 +1,14 @@
 # N.E.R.V.E.
 ### Neural Execution Relay Via Epyon
 
-The Zero System task dispatcher. Lives in your system tray on Eva-01 (Windows), dispatches tasks to Epyon.
-
-A deliberate nod to the NERV organization from Evangelion — fitting for a system where Eva-01 sends commands to Epyon.
+Electron tray app for dispatching tasks to the Zero System automation pipeline on Epyon (ThinkPad X220). Eva-01 (Windows) sends commands; Epyon executes them via Claude Code.
 
 ## Setup
 
 ### Prerequisites
-- Node.js 18+ installed on Windows
-- Your sync folder at `C:\Users\Ricka\sync`
-- Syncthing running and connected to Epyon
+- Node.js 18+ on Windows
+- Syncthing running and synced to Epyon
+- Sync folder at `C:\Users\<you>\sync` (or browse to choose another)
 
 ### Install and run
 
@@ -28,31 +26,17 @@ npm run build
 ## Usage
 
 1. Click the tray icon to open NERVE
-2. Enter a project name
-3. Write your dispatch (see formats below)
+2. Enter a **project name** or pick one from **Load existing**
+3. Write your dispatch in the editor
 4. Click **◉ dispatch to epyon**
-5. NERVE creates the folder and files in your sync folder
-6. Syncthing pushes to Epyon
-7. Zero System picks it up and starts building
 
-## Dispatch formats
+NERVE writes files to your sync folder → Syncthing pushes to Epyon → Zero System picks them up and runs Claude Code.
 
-### Standard (tasks mode)
-Write a `## Plan` and `## Tasks` section. Zero System runs one Claude Code session per task line and marks each done as it goes.
+## Dispatch modes
 
-```
-## Plan
-Describe what you want Epyon to build. Include tech constraints,
-existing files to modify, and any conventions to follow.
+### Plan-only / auto-plan (default)
 
-## Tasks
-- First task
-- Second task
-- Third task
-```
-
-### Plan-only (auto-plan mode)
-Check **auto-plan** in the footer. Write only a `## Plan` — no tasks needed. Zero System passes the full plan to a single Claude Code session and trusts Claude to break down and execute the work itself.
+Check **auto-plan** in the footer. Write only a `## Plan` section. Zero System passes the full plan to a single Claude Code session — Claude breaks down and executes the work itself. Uses one session per dispatch instead of one per task.
 
 ```
 ## Plan
@@ -60,27 +44,37 @@ Describe what you want Epyon to build. Claude will figure out
 the steps and execute them in one session.
 ```
 
-Plan-only mode uses one Claude Code session per work package instead of one per task line, which reduces usage significantly for complex requests.
+### Plan + tasks
 
-## Scheduling tasks
+Uncheck **auto-plan**. Write both sections. Zero System runs one Claude Code session per task line, marking each done as it goes.
 
-To defer processing until a specific time, write a `scheduling.md` file into
-the project's sync folder alongside `tasks.md`:
-
-**`~/sync/<project>/scheduling.md`**
 ```
-run at HH:MM
+## Plan
+Describe context, constraints, and conventions.
+
+## Tasks
+- First task
+- Second task
+- Third task
 ```
 
-NERVE creates this file when a scheduled dispatch is sent. Zero System reads it
-at the top of its drain loop before running any tasks.
+## Scheduling
 
-- Uses 24-hour clock, zero-padded: `run at 02:00`, `run at 22:30`, `run at 09:15`
-- `scheduling.md` is a one-shot file — Zero System deletes it after reading
-- If the scheduled time has already passed, the task is queued for the same
-  time the next day
-- Zero System logs `[project] Scheduled for HH:MM via at — scheduling.md removed`
-  and re-triggers automatically at the right time via `touch tasks.md`
+Check **schedule** in the footer and set a time (24-hour, e.g. `08:00`). NERVE writes a `scheduling.md` alongside the dispatch. Zero System defers execution until that time, then deletes the file.
+
+If the time has already passed today, execution is deferred to the same time tomorrow.
+
+## Load existing
+
+The **Load existing** dropdown lists projects already in your sync folder. Select one and click **load** to pull its current `plan.md` + `tasks.md` into the editor for editing and re-dispatch.
+
+## Draft with AI
+
+Click **✦ draft with AI** to open the AI chat panel. Select a local Ollama model, describe what you want, and receive a draft `## Plan` / `## Tasks` pre-filled into the editor. Review and dispatch from there.
+
+## Onboard a GitHub repo
+
+Click **⊕ onboard**, enter a GitHub repo (`user/repo` or full URL), and click **confirm**. NERVE dispatches a `zero-onboard` plan to clone and set up the repo on Epyon.
 
 ## The name
 
